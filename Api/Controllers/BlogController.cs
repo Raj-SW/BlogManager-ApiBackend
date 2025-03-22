@@ -26,7 +26,6 @@ namespace Api.Controllers
                 return BadRequest("Blog post data is required.");
 
             var createdPost = await _blogService.CreateBlogPostAsync(newPost);
-            //return CreatedAtAction(nameof(GetBlogPostByIdAsync), new { id = createdPost.BlogPostId }, createdPost);
             return Ok(createdPost);
         }
 

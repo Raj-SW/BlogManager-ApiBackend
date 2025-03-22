@@ -1,5 +1,4 @@
-﻿using Google.Cloud.Firestore;
-using Microsoft.Extensions.Configuration;
+﻿using DataAcessLayer.BlogPostDAL;
 using Microsoft.Extensions.Logging;
 using Model.BlogPost;
 
@@ -7,18 +6,12 @@ namespace BusinessLayer.BlogPostService
 {
     public class FirestoreBlogPostService : IBlogPostService
     {
-        private readonly FirestoreDb _db;
+        private readonly IBlogPostDAL _blogPostDAL;
         private readonly ILogger<FirestoreBlogPostService> _logger;
-        private readonly string? _blogCollectionName;
-        private readonly string? _credentialPath;
-        private readonly string? _projectId;
 
-        public FirestoreBlogPostService(ILogger<FirestoreBlogPostService> logger, IConfiguration config)
+        public FirestoreBlogPostService(ILogger<FirestoreBlogPostService> logger, IBlogPostDAL blogPostDAL)
         {
-            _credentialPath = config["GoogleCloud:CredentialPath"];
-            _projectId = config["GoogleCloud:ProjectId"];
-            _blogCollectionName = config["GoogleCloud:BlogCollectionName"];
-            _db = FirestoreDb.Create(_projectId);
+            _blogPostDAL = blogPostDAL;
             _logger = logger;
         }
 
@@ -26,18 +19,7 @@ namespace BusinessLayer.BlogPostService
         {
             try
             {
-                var snapshot = await _db.Collection(_blogCollectionName).GetSnapshotAsync();
-                var posts = new List<BlogPost>();
-                foreach (var doc in snapshot.Documents)
-                {
-                    if (doc.Exists)
-                    {
-                        var post = doc.ConvertTo<BlogPost>();
-                        post.BlogPostDocumentId = doc.Id;
-                        posts.Add(post);
-                    }
-                }
-                return posts;
+                return await _blogPostDAL.GetAllBlogPostsAsync();
             }
             catch (Exception ex)
             {
@@ -50,15 +32,7 @@ namespace BusinessLayer.BlogPostService
         {
             try
             {
-                var docRef = _db.Collection(_blogCollectionName).Document(id);
-                var snapshot = await docRef.GetSnapshotAsync();
-                if (snapshot.Exists)
-                {
-                    var post = snapshot.ConvertTo<BlogPost>();
-                    post.BlogPostDocumentId = snapshot.Id;
-                    return post;
-                }
-                return null;
+                return await _blogPostDAL.GetBlogPostByIdAsync(id);
             }
             catch (Exception ex)
             {
@@ -71,11 +45,7 @@ namespace BusinessLayer.BlogPostService
         {
             try
             {
-                blogPost.CreatedDate = DateTime.UtcNow;
-                var collectionRef = _db.Collection(_blogCollectionName);
-                var docRef = await collectionRef.AddAsync(blogPost);
-                blogPost.BlogPostDocumentId = docRef.Id;
-                return blogPost;
+                return await _blogPostDAL.CreateBlogPostAsync(blogPost);
             }
             catch (Exception ex)
             {
@@ -88,10 +58,7 @@ namespace BusinessLayer.BlogPostService
         {
             try
             {
-                var docRef = _db.Collection(_blogCollectionName).Document(documentId);
-                // Ensure the document ID remains consistent.
-                updatedPost.BlogPostDocumentId = documentId;
-                await docRef.SetAsync(updatedPost, SetOptions.Overwrite);
+                await _blogPostDAL.UpdateBlogPostAsync(documentId, updatedPost);
             }
             catch (Exception ex)
             {
@@ -104,8 +71,7 @@ namespace BusinessLayer.BlogPostService
         {
             try
             {
-                var docRef = _db.Collection(_blogCollectionName).Document(id);
-                await docRef.DeleteAsync();
+                await _blogPostDAL.DeleteBlogPostAsync(id);
             }
             catch (Exception ex)
             {
@@ -115,7 +81,7 @@ namespace BusinessLayer.BlogPostService
         }
         public async Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
         {
-            throw new NotImplementedException();
+            await _blogPostDAL.SuggestEditBlogPostAsync(suggestEditBlog);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Firebase.Auth;
+﻿using BusinessLayer.AuthenthicationService;
+using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -7,14 +8,18 @@ namespace Api.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly FirebaseAuthProvider _firebaseAuthProvider = new FirebaseAuthProvider(new FirebaseConfig("AIzaSyDKFxDC0dfSKJlYqKOvqCNU1sh_v1NvHHY"));
+        private readonly IAuthenticationService _authenticationService;
+        public AuthenticationController(IAuthenticationService authenticationService)
+        {
+            _authenticationService = authenticationService;
+        }
 
         [HttpPost("NativeRegister")]
         public async Task<IActionResult> NativeRegisterAsync(string email, string password)
         {
             try
             {
-                var result = await _firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(email, password);
+                var result = await _authenticationService.NativeRegisterAsync(email, password);
                 return Ok(result);
             }
             catch (FirebaseAuthException ex)
@@ -28,7 +33,7 @@ namespace Api.Controllers
         {
             try
             {
-                var result = await _firebaseAuthProvider.SignInWithEmailAndPasswordAsync(email, password);
+                var result = await _authenticationService.NativeLoginAsync(email, password);
                 return Ok(result);
             }
             catch (FirebaseAuthException ex)
@@ -37,12 +42,12 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("LoginByGoogle")]
+        [HttpPost("LoginByGoogleAsync")]
         public async Task<IActionResult> LoginByGoogleAsync(string email, string password)
         {
             try
             {
-                var result = await _firebaseAuthProvider.SignInWithEmailAndPasswordAsync(email, password);
+                var result = await _authenticationService.LoginByGoogleAsync(email, password);
                 return Ok(result);
             }
             catch (FirebaseAuthException ex)
@@ -51,12 +56,13 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("Logout")]
+        [HttpPost("LogoutAsync")]
         public async Task<IActionResult> LogoutAsync()
         {
             try
             {
-                return await Task.FromResult(Ok());
+                await _authenticationService.LogoutAsync();
+                return Ok();
             }
             catch (FirebaseAuthException ex)
             {

@@ -1,8 +1,8 @@
 ﻿using Firebase.Auth;
 
-namespace BusinessLayer.AuthenthicationService
+namespace DataAcessLayer.AuthenticationDAL
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationDAL
     {
         Task<FirebaseAuthLink> NativeRegisterAsync(string email, string password);
         Task<FirebaseAuthLink> NativeLoginAsync(string email, string password);
