@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.AuthenthicationService;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
+using User = Model.User.User;
 
 namespace Api.Controllers
 {
@@ -9,17 +10,20 @@ namespace Api.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
-        public AuthenticationController(IAuthenticationService authenticationService)
+        private readonly IConfiguration _config;
+
+        public AuthenticationController(IAuthenticationService authenticationService, IConfiguration config)
         {
             _authenticationService = authenticationService;
+            _config = config;
         }
 
         [HttpPost("NativeRegister")]
-        public async Task<IActionResult> NativeRegisterAsync(string email, string password)
+        public async Task<IActionResult> NativeRegisterAsync([FromBody] User userRegistrationDTO)
         {
             try
             {
-                var result = await _authenticationService.NativeRegisterAsync(email, password);
+                var result = await _authenticationService.NativeRegisterAsync(userRegistrationDTO);
                 return Ok(result);
             }
             catch (FirebaseAuthException ex)
@@ -31,10 +35,22 @@ namespace Api.Controllers
         [HttpPost("NativeLogin")]
         public async Task<IActionResult> NativeLoginAsync(string email, string password)
         {
+            if (email == null || password == null)
+                return BadRequest("Invalid login data.");
             try
             {
-                var result = await _authenticationService.NativeLoginAsync(email, password);
-                return Ok(result);
+                FirebaseAuthLink result = await _authenticationService.NativeLoginAsync(email, password);
+                if (result != null)
+                {
+                    var secretKey = _config["Jwt:SecretKey"];
+                    var token = JwtManager.GenerateToken(
+                       userId: result.User.LocalId,
+                       role: "LoggedUser",
+                       secretKey: secretKey
+                   );
+                    return Ok(new { authResult = result, token });
+                }
+                return Unauthorized(new { error = "Authentication failed." });
             }
             catch (FirebaseAuthException ex)
             {

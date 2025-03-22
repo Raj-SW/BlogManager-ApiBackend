@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.BlogPostService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.BlogPost;
 
@@ -75,6 +76,7 @@ namespace Api.Controllers
         /// DELETE: api/Blog/{id}
         /// Deletes a blog post.
         /// </summary>
+        [Authorize(Policy = "LoggedUser")]
         [HttpPost("DeletePostAsync")]
         public async Task<IActionResult> DeletePostAsync(string id)
         {

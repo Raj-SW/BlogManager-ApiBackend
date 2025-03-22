@@ -7,10 +7,15 @@ using DataAcessLayer.AuthenticationDAL;
 using DataAcessLayer.BlogPostDAL;
 using DataAcessLayer.CommentDAL;
 using DataAcessLayer.UserDAL;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Read from appsettings.json for Firestore
+// ------------------------------------------------------------------------
+// 1. Read from appsettings.json for Firestore
+// ------------------------------------------------------------------------
 var credentialPath = builder.Configuration["GoogleCloud:CredentialPath"];
 var projectId = builder.Configuration["GoogleCloud:ProjectId"];
 
@@ -19,6 +24,9 @@ if (!string.IsNullOrWhiteSpace(credentialPath))
     Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
 }
 
+// ------------------------------------------------------------------------
+// 2. Configure Services
+// ------------------------------------------------------------------------
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
@@ -31,15 +39,23 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// ------------------------------------------------------------------------
+// 3. Register Business/Data Access Services
+// ------------------------------------------------------------------------
 builder.Services.AddScoped<IBlogPostService, FirestoreBlogPostService>();
 builder.Services.AddScoped<IAuthenticationService, FirebaseAuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+
 builder.Services.AddScoped<IBlogPostDAL, FirestoreBlogPostDAL>();
 builder.Services.AddScoped<IAuthenticationDAL, FirebaseAuthenticationDAL>();
 builder.Services.AddScoped<IUserDAL, UserDAL>();
 builder.Services.AddScoped<ICommentDAL, CommentDAL>();
 
+// ------------------------------------------------------------------------
+// 4. Configure CORS
+// ------------------------------------------------------------------------
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -51,8 +67,58 @@ builder.Services.AddCors(options =>
         });
 });
 
+// ------------------------------------------------------------------------
+// 5. Authentication & Authorization for JwT Token
+// ------------------------------------------------------------------------
+string? jwtIssuer = builder.Configuration["Jwt:Issuer"];
+string? jwtAudience = builder.Configuration["Jwt:Audience"];
+var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    // Configure Token Validation
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtIssuer,
+
+        ValidateAudience = true,
+        ValidAudience = jwtAudience,
+
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
+    };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy =>
+    {
+        policy.RequireRole("Admin");
+    });
+
+    options.AddPolicy("LoggedUser", policy =>
+    {
+        policy.RequireRole("LoggedUser", "Editor");
+    });
+});
+
+// ------------------------------------------------------------------------
+// 6. Build the App
+// ------------------------------------------------------------------------
 var app = builder.Build();
 
+// ------------------------------------------------------------------------
+// 7. Middleware Pipeline
+// ------------------------------------------------------------------------
 app.UseSession();
 
 if (app.Environment.IsDevelopment())
@@ -62,6 +128,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowReactApp");
+
+// Enable Authentication & Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

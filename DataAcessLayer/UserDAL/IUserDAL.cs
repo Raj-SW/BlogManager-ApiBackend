@@ -1,6 +1,6 @@
 ﻿namespace DataAcessLayer.UserDAL
 {
-    public class IUserDAL
+    public interface IUserDAL
     {
     }
 }

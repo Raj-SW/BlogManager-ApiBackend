@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using Microsoft.Extensions.Configuration;
+using User = Model.User.User;
 
 namespace DataAcessLayer.AuthenticationDAL
 {
@@ -19,9 +20,10 @@ namespace DataAcessLayer.AuthenticationDAL
 
             _firebaseAuthProvider = new FirebaseAuthProvider(new FirebaseConfig(_firebaseAuthKey));
         }
-        public Task<FirebaseAuthLink> LoginByGoogleAsync(string email, string password)
+        public async Task<FirebaseAuthLink> NativeRegisterAsync(User userRegistrationModel)
         {
-            throw new NotImplementedException();
+            FirebaseAuthLink result = await _firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(userRegistrationModel.Email, userRegistrationModel.Password, userRegistrationModel.UserName);
+            return result;
         }
 
         public async Task<FirebaseAuthLink> NativeLoginAsync(string email, string password)
@@ -30,10 +32,9 @@ namespace DataAcessLayer.AuthenticationDAL
             return result;
         }
 
-        public async Task<FirebaseAuthLink> NativeRegisterAsync(string email, string password)
+        public Task<FirebaseAuthLink> LoginByGoogleAsync(string email, string password)
         {
-            FirebaseAuthLink result = await _firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(email, password);
-            return result;
+            throw new NotImplementedException();
         }
 
         public async Task LogoutAsync()
