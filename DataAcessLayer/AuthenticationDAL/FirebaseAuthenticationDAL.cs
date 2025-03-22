@@ -41,5 +41,10 @@ namespace DataAcessLayer.AuthenticationDAL
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Firebase.Auth.User> FindUserByEmail(string email)
+        {
+            return await _firebaseAuthProvider.GetUserAsync(email);
+        }
     }
 }

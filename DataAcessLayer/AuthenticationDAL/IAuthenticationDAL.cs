@@ -9,5 +9,6 @@ namespace DataAcessLayer.AuthenticationDAL
         Task<FirebaseAuthLink> NativeLoginAsync(string email, string password);
         Task<FirebaseAuthLink> LoginByGoogleAsync(string email, string password);
         Task LogoutAsync();
+        Task<Firebase.Auth.User> FindUserByEmail(string email);
     }
 }

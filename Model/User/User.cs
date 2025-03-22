@@ -8,7 +8,7 @@ namespace Model.User
         [FirestoreDocumentId]
         public string? DocumentId { get; set; }
         [FirestoreProperty]
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
         [FirestoreProperty]
         public required string UserName { get; set; }
         [FirestoreProperty]
@@ -16,9 +16,10 @@ namespace Model.User
         [FirestoreProperty]
         public required string LastName { get; set; }
         [FirestoreProperty]
-        public IList<string>? Roles { get; set; }
+        public string? Role { get; set; }
         [FirestoreProperty]
         public required string Email { get; set; }
         public string? Password { get; set; }
+        public string? Token { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace DataAcessLayer.BlogPostDAL
         private readonly FirestoreDb _db;
         private readonly ILogger<FirestoreBlogPostDAL> _logger;
         private readonly string? _blogCollectionName;
+        private readonly string? _userCollectionName;
         private readonly string? _credentialPath;
         private readonly string? _projectId;
 
@@ -18,6 +19,7 @@ namespace DataAcessLayer.BlogPostDAL
             _credentialPath = config["GoogleCloud:CredentialPath"];
             _projectId = config["GoogleCloud:ProjectId"];
             _blogCollectionName = config["GoogleCloud:BlogCollectionName"];
+            _userCollectionName = config["GoogleCloud:UserCollectionName"];
             _db = FirestoreDb.Create(_projectId);
             _logger = logger;
         }
