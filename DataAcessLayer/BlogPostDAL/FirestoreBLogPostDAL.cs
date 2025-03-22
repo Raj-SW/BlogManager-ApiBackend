@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Model.BlogPost;
+using Model.Utils;
 
 namespace DataAcessLayer.BlogPostDAL
 {
@@ -24,32 +25,38 @@ namespace DataAcessLayer.BlogPostDAL
             _logger = logger;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync()
+        public async Task<Result> GetAllBlogPostsAsync()
         {
+            Result result = new();
+
             try
             {
-                var snapshot = await _db.Collection(_blogCollectionName).GetSnapshotAsync();
-                var posts = new List<BlogPost>();
-                foreach (var doc in snapshot.Documents)
+                QuerySnapshot? snapshot = await _db.Collection(_blogCollectionName).GetSnapshotAsync();
+                List<BlogPost> posts = new List<BlogPost>();
+                foreach (DocumentSnapshot doc in snapshot.Documents)
                 {
                     if (doc.Exists)
                     {
-                        var post = doc.ConvertTo<BlogPost>();
+                        BlogPost post = doc.ConvertTo<BlogPost>();
                         post.BlogPostDocumentId = doc.Id;
                         posts.Add(post);
                     }
                 }
-                return posts;
+                result.ResultObject = posts;
+                return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving all blog posts.");
-                throw;
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+                return result;
             }
         }
 
-        public async Task<BlogPost?> GetBlogPostByIdAsync(string id)
+        public async Task<Result?> GetBlogPostByIdAsync(string id)
         {
+            Result result = new();
             try
             {
                 var docRef = _db.Collection(_blogCollectionName).Document(id);
@@ -58,52 +65,68 @@ namespace DataAcessLayer.BlogPostDAL
                 {
                     var post = snapshot.ConvertTo<BlogPost>();
                     post.BlogPostDocumentId = snapshot.Id;
-                    return post;
+                    result.ResultObject = post;
+                    return result;
                 }
                 return null;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error retrieving blog post with ID {id}.");
-                throw;
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+                return result;
             }
         }
 
-        public async Task<BlogPost> CreateBlogPostAsync(BlogPost blogPost)
+        public async Task<Result> CreateBlogPostAsync(BlogPost blogPost)
         {
+            Result result = new();
+
             try
             {
                 blogPost.CreatedDate = DateTime.UtcNow;
                 var collectionRef = _db.Collection(_blogCollectionName);
                 var docRef = await collectionRef.AddAsync(blogPost);
                 blogPost.BlogPostDocumentId = docRef.Id;
-                return blogPost;
+                result.ResultObject = blogPost;
+                return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating new blog post.");
-                throw;
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+                return result;
             }
         }
 
-        public async Task UpdateBlogPostAsync(string documentId, BlogPost updatedPost)
+        public async Task<Result> UpdateBlogPostAsync(string documentId, BlogPost updatedPost)
         {
+            Result result = new();
+
             try
             {
                 var docRef = _db.Collection(_blogCollectionName).Document(documentId);
                 // Ensure the document ID remains consistent.
                 updatedPost.BlogPostDocumentId = documentId;
                 await docRef.SetAsync(updatedPost, SetOptions.Overwrite);
+                result.ResultObject = updatedPost;
+                return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error updating blog post with ID {documentId}.");
-                throw;
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+                return result;
             }
         }
 
         public async Task DeleteBlogPostAsync(string id)
         {
+            Result result = new();
+
             try
             {
                 var docRef = _db.Collection(_blogCollectionName).Document(id);
@@ -112,10 +135,26 @@ namespace DataAcessLayer.BlogPostDAL
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error deleting blog post with ID {id}.");
-                throw;
+                throw ex;
             }
         }
-        public async Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
+
+        public Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> GetAllBlogPostsByAuthorAsync(string AuthorName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> SearchBlogPostAsync(string search)
         {
             throw new NotImplementedException();
         }

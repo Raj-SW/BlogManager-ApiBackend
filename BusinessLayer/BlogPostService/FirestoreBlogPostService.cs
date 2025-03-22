@@ -1,6 +1,7 @@
 ﻿using DataAcessLayer.BlogPostDAL;
 using Microsoft.Extensions.Logging;
 using Model.BlogPost;
+using Model.Utils;
 
 namespace BusinessLayer.BlogPostService
 {
@@ -15,7 +16,7 @@ namespace BusinessLayer.BlogPostService
             _logger = logger;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync()
+        public async Task<Result> GetAllBlogPostsAsync()
         {
             try
             {
@@ -28,7 +29,7 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task<BlogPost?> GetBlogPostByIdAsync(string id)
+        public async Task<Result> GetBlogPostByIdAsync(string id)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task<BlogPost> CreateBlogPostAsync(BlogPost blogPost)
+        public async Task<Result> CreateBlogPostAsync(BlogPost blogPost)
         {
             try
             {
@@ -79,9 +80,30 @@ namespace BusinessLayer.BlogPostService
                 throw;
             }
         }
+
         public async Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
         {
             await _blogPostDAL.SuggestEditBlogPostAsync(suggestEditBlog);
+        }
+
+        public Task<Result> SearchBlogPostAsync(string search)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> GetAllBlogPostsByAuthorAsync(string AuthorName)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<Result> IBlogPostService.UpdateBlogPostAsync(string documentId, BlogPost updatedPost)
+        {
+            throw new NotImplementedException();
         }
     }
 }

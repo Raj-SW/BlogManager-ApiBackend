@@ -1,4 +1,5 @@
 ﻿using Google.Cloud.Firestore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Model.BlogPost
 {
@@ -8,17 +9,19 @@ namespace Model.BlogPost
         [FirestoreDocumentId]
         public string? BlogPostDocumentId { get; set; }
         [FirestoreProperty]
+        [Required]
         public required string Title { get; set; }
         [FirestoreProperty]
+        [Required]
         public required string Content { get; set; }
         [FirestoreProperty]
         public DateTime? CreatedDate { get; set; }
         [FirestoreProperty]
-        public required int Likes { get; set; }
+        public int Likes { get; set; } = 0;
         [FirestoreProperty]
-        public required bool IsFeatured { get; set; }
+        public bool IsFeatured { get; set; } = false;
         [FirestoreProperty]
-        public required IEnumerable<string> Tags { get; set; }
+        public IEnumerable<string> Tags { get; set; } = [];
         [FirestoreProperty]
         public required string CreatedBy { get; set; }
     }
