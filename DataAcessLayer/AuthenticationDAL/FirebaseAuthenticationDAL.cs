@@ -1,6 +1,6 @@
 ﻿using Firebase.Auth;
 using Microsoft.Extensions.Configuration;
-using User = Model.User.User;
+using Model.DTO.Authentication;
 
 namespace DataAcessLayer.AuthenticationDAL
 {
@@ -20,19 +20,19 @@ namespace DataAcessLayer.AuthenticationDAL
 
             _firebaseAuthProvider = new FirebaseAuthProvider(new FirebaseConfig(_firebaseAuthKey));
         }
-        public async Task<FirebaseAuthLink> NativeRegisterAsync(User userRegistrationModel)
+        public async Task<FirebaseAuthLink> NativeRegisterAsync(NativeSignUpDto nativeSignUpDto)
         {
-            FirebaseAuthLink result = await _firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(userRegistrationModel.Email, userRegistrationModel.Password, userRegistrationModel.UserName);
+            FirebaseAuthLink result = await _firebaseAuthProvider.CreateUserWithEmailAndPasswordAsync(nativeSignUpDto.Email, nativeSignUpDto.Password, nativeSignUpDto.UserName);
             return result;
         }
 
-        public async Task<FirebaseAuthLink> NativeLoginAsync(string email, string password)
+        public async Task<FirebaseAuthLink> NativeLoginAsync(LoginDto loginDto)
         {
-            FirebaseAuthLink result = await _firebaseAuthProvider.SignInWithEmailAndPasswordAsync(email, password);
+            FirebaseAuthLink result = await _firebaseAuthProvider.SignInWithEmailAndPasswordAsync(loginDto.Email, loginDto.Password);
             return result;
         }
 
-        public Task<FirebaseAuthLink> LoginByGoogleAsync(string email, string password)
+        public Task<FirebaseAuthLink> LoginByGoogleAsync(LoginDto nativeLoginDto)
         {
             throw new NotImplementedException();
         }
@@ -42,7 +42,7 @@ namespace DataAcessLayer.AuthenticationDAL
             throw new NotImplementedException();
         }
 
-        public async Task<Firebase.Auth.User> FindUserByEmail(string email)
+        public async Task<User> FindUserByEmail(string email)
         {
             return await _firebaseAuthProvider.GetUserAsync(email);
         }

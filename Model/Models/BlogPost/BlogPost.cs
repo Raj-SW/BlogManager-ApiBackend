@@ -15,6 +15,9 @@ namespace Model.BlogPost
         [Required]
         public required string Content { get; set; }
         [FirestoreProperty]
+        [Required]
+        public required string Excerpt { get; set; }
+        [FirestoreProperty]
         public DateTime? CreatedDate { get; set; }
         [FirestoreProperty]
         public int Likes { get; set; } = 0;

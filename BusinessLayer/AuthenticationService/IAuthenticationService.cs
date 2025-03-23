@@ -1,13 +1,14 @@
-﻿using Model.Utils;
-using User = Model.User.User;
+﻿using Model.DTO.Authentication;
+using Model.Utils;
+
 
 namespace BusinessLayer.AuthenthicationService
 {
     public interface IAuthenticationService
     {
-        Task<Result> NativeRegisterAsync(User userRegistrationDTO);
-        Task<Result> NativeLoginAsync(string email, string password);
-        Task<Result> LoginByGoogleAsync(string email, string password);
+        Task<Result> NativeRegisterAsync(NativeSignUpDto nativeSignUpDTO);
+        Task<Result> NativeLoginAsync(LoginDto loginDto);
+        Task<Result> LoginByGoogleAsync(LoginDto loginDto);
         Task LogoutAsync();
     }
 }

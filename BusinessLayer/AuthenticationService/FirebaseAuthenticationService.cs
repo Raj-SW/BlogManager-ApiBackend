@@ -3,6 +3,7 @@ using DataAcessLayer.AuthenticationDAL;
 using DataAcessLayer.UserDAL;
 using Firebase.Auth;
 using Microsoft.Extensions.Configuration;
+using Model.DTO.Authentication;
 using Model.Enum;
 using Model.Utils;
 using User = Model.User.User;
@@ -14,34 +15,36 @@ namespace BusinessLayer.AuthenticationService
         private readonly IAuthenticationDAL _authenticationDAL = authenticationDAL;
         private readonly IConfiguration _config = configuration;
         private readonly IUserDAL _userDAL = userDAL;
-        public async Task<Result> NativeRegisterAsync(User userRegistrationDTO)
+
+        public async Task<Result> NativeRegisterAsync(NativeSignUpDto nativeSignUpDTO)
         {
             Result result = new();
+            User user = null;
 
             try
             {
-                User? isExistingUser = await GetUserByEmailAsync(userRegistrationDTO.Email);
+                User? isExistingUser = await GetUserByEmailAsync(nativeSignUpDTO.Email);
 
                 if (isExistingUser == null)
                 {
-                    FirebaseAuthLink createdUserInfo = await _authenticationDAL.NativeRegisterAsync(userRegistrationDTO);
-                    userRegistrationDTO.UserId = createdUserInfo.User.LocalId;
-                    userRegistrationDTO.Email = createdUserInfo.User.Email;
-                    userRegistrationDTO.Role = RoleEnum.LoggedUser.ToString();
+                    FirebaseAuthLink createdUserInfo = await _authenticationDAL.NativeRegisterAsync(nativeSignUpDTO);
+                    user.UserId = createdUserInfo.User.LocalId;
+                    user.Email = createdUserInfo.User.Email;
+                    user.Role = RoleEnum.LoggedUser.ToString();
 
-                    await _userDAL.CreateUserAsync(userRegistrationDTO);
+                    await _userDAL.CreateUserAsync(user);
                     result.IsSuccess = true;
 
                     return result;
                 }
 
-                if (isExistingUser.Email == userRegistrationDTO.Email)
+                if (isExistingUser.Email == nativeSignUpDTO.Email)
                 {
                     result.IsSuccess = false;
                     result.ErrorMessage.Add("Email already taken");
                 }
 
-                if (isExistingUser.UserName == userRegistrationDTO.UserName)
+                if (isExistingUser.UserName == nativeSignUpDTO.UserName)
                 {
                     result.IsSuccess = false;
                     result.ErrorMessage.Add("User namer already taken");
@@ -58,17 +61,17 @@ namespace BusinessLayer.AuthenticationService
             return result;
         }
 
-        public async Task<Result> NativeLoginAsync(string email, string password)
+        public async Task<Result> NativeLoginAsync(LoginDto loginDto)
         {
             Result result = new Result();
 
-            if (string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(loginDto.Email))
             {
                 result.IsSuccess = false;
                 result.ErrorMessage.Add("Invalid email");
             }
 
-            if (string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(loginDto.Password))
             {
                 result.IsSuccess = false;
                 result.ErrorMessage.Add("Invalid password");
@@ -77,9 +80,9 @@ namespace BusinessLayer.AuthenticationService
             try
             {
 
-                FirebaseAuthLink? successfulLoginInfo = await _authenticationDAL.NativeLoginAsync(email, password);
+                FirebaseAuthLink? successfulLoginInfo = await _authenticationDAL.NativeLoginAsync(loginDto);
 
-                User? user = await GetUserByEmailAsync(email);
+                User? user = await GetUserByEmailAsync(loginDto.Email);
                 var secretKey = _config["Jwt:SecretKey"];
                 user.Token = JwtManager.GenerateToken(user.UserId, user.Role, secretKey);
 
@@ -94,10 +97,10 @@ namespace BusinessLayer.AuthenticationService
             return result;
         }
 
-        public Task<Result> LoginByGoogleAsync(string email, string password)
+        public Task<Result> LoginByGoogleAsync(LoginDto loginDto)
         {
             Result result = new Result();
-            _authenticationDAL.LoginByGoogleAsync(email, password);
+            _authenticationDAL.LoginByGoogleAsync(loginDto);
             return Task.FromResult(result);
         }
 

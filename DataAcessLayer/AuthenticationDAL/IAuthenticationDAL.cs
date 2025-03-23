@@ -1,13 +1,13 @@
 ﻿using Firebase.Auth;
-using User = Model.User.User;
+using Model.DTO.Authentication;
 
 namespace DataAcessLayer.AuthenticationDAL
 {
     public interface IAuthenticationDAL
     {
-        Task<FirebaseAuthLink> NativeRegisterAsync(User userRegistrationDTO);
-        Task<FirebaseAuthLink> NativeLoginAsync(string email, string password);
-        Task<FirebaseAuthLink> LoginByGoogleAsync(string email, string password);
+        Task<FirebaseAuthLink> NativeRegisterAsync(NativeSignUpDto nativeSignUpDto);
+        Task<FirebaseAuthLink> NativeLoginAsync(LoginDto nativeLoginDto);
+        Task<FirebaseAuthLink> LoginByGoogleAsync(LoginDto nativeLoginDto);
         Task LogoutAsync();
         Task<Firebase.Auth.User> FindUserByEmail(string email);
     }

@@ -1,6 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace Model.Comment
+namespace Model.Models.Comment
 {
     [FirestoreData]
     public class Comment

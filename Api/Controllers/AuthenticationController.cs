@@ -1,7 +1,7 @@
 ﻿using BusinessLayer.AuthenthicationService;
 using Microsoft.AspNetCore.Mvc;
+using Model.DTO.Authentication;
 using Model.Utils;
-using User = Model.User.User;
 
 namespace Api.Controllers
 {
@@ -19,24 +19,24 @@ namespace Api.Controllers
         }
 
         [HttpPost("NativeRegister")]
-        public async Task<IActionResult> NativeRegisterAsync([FromBody] User userRegistrationDTO)
+        public async Task<IActionResult> NativeRegisterAsync([FromBody] NativeSignUpDto nativeSignUpDto)
         {
-            Result result = await _authenticationService.NativeRegisterAsync(userRegistrationDTO);
+            Result result = await _authenticationService.NativeRegisterAsync(nativeSignUpDto);
             return Ok(result);
         }
 
         [HttpPost("NativeLogin")]
-        public async Task<IActionResult> NativeLoginAsync(string email, string password)
+        public async Task<IActionResult> NativeLoginAsync([FromBody] LoginDto loginDto)
         {
-            Result result = await _authenticationService.NativeLoginAsync(email, password);
+            Result result = await _authenticationService.NativeLoginAsync(loginDto);
             return Ok(result);
         }
 
         [HttpPost("LoginByGoogleAsync")]
-        public async Task<IActionResult> LoginByGoogleAsync(string email, string password)
+        public async Task<IActionResult> LoginByGoogleAsync([FromBody] LoginDto loginDto)
         {
 
-            var result = await _authenticationService.LoginByGoogleAsync(email, password);
+            var result = await _authenticationService.LoginByGoogleAsync(loginDto);
             return Ok(result);
         }
 
