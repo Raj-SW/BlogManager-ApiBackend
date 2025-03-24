@@ -2,14 +2,15 @@ using BusinessLayer.AuthenthicationService;
 using BusinessLayer.AuthenticationService;
 using BusinessLayer.BlogPostService;
 using BusinessLayer.CommentService;
+using BusinessLayer.ImageUpload;
 using BusinessLayer.UserService;
-using CloudinaryDotNet;
 using DataAcessLayer.AuthenticationDAL;
 using DataAcessLayer.BlogPostDAL;
 using DataAcessLayer.CommentDAL;
 using DataAcessLayer.UserDAL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Model.Utils;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,7 @@ builder.Services.AddScoped<IBlogPostDAL, FirestoreBlogPostDAL>();
 builder.Services.AddScoped<IAuthenticationDAL, FirebaseAuthenticationDAL>();
 builder.Services.AddScoped<IUserDAL, UserDAL>();
 builder.Services.AddScoped<ICommentDAL, CommentDAL>();
+builder.Services.AddScoped<IFileImageUpload, CloudinaryImageService>();
 
 // ------------------------------------------------------------------------
 // 4. Configure CORS
@@ -116,14 +118,8 @@ builder.Services.AddAuthorization(options =>
 //-------------------------------------------------------------------------
 // File hosting
 //-------------------------------------------------------------------------
-// Set your Cloudinary credentials
-//=================================
-string? apiKeyCloudinary = builder.Configuration["Cloudinary:ApiKey"];
-string? apiSecretCloudinary = builder.Configuration["Cloudinary:ApiSecret"];
-string? cloudNameCloudinary = builder.Configuration["Cloudinary:CloudName"];
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
-Cloudinary cloudinary = new Cloudinary($"cloudinary://{apiKeyCloudinary}:{apiSecretCloudinary}@{cloudNameCloudinary}");
-cloudinary.Api.Secure = true;
 
 // ------------------------------------------------------------------------
 // 6. Build the App

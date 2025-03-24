@@ -1,4 +1,5 @@
-﻿using DataAcessLayer.BlogPostDAL;
+﻿using BusinessLayer.ImageUpload;
+using DataAcessLayer.BlogPostDAL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Model.BlogPost;
@@ -12,24 +13,26 @@ namespace BusinessLayer.BlogPostService
         private readonly IBlogPostDAL _blogPostDAL;
         private readonly ILogger<FirestoreBlogPostService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFileImageUpload _imageService;
 
         public FirestoreBlogPostService(
             ILogger<FirestoreBlogPostService> logger,
             IBlogPostDAL blogPostDAL,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IFileImageUpload fileImageUpload)
         {
             _blogPostDAL = blogPostDAL;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _imageService = fileImageUpload;
         }
 
-        public async Task<Result> CreateBlogPostAsync(BlogPost blogPost)
+        public async Task<Result> CreateBlogPostAsync(BlogPost blogPost, IFormFile formFile)
         {
             Result result = new();
             try
             {
-                ClaimsPrincipal userClaims = _httpContextAccessor.HttpContext?.User;
-                string userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
+                ClaimsPrincipal? userClaims = _httpContextAccessor.HttpContext?.User;
+                string? userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
 
                 if (string.IsNullOrEmpty(userName))
                 {
@@ -40,12 +43,13 @@ namespace BusinessLayer.BlogPostService
 
                 blogPost.CreatedBy = userName;
                 blogPost.CreatedDate = DateTime.UtcNow;
+                blogPost.ThumbNailLink = await UploadBlogThumbnailImage(formFile);
                 result = await _blogPostDAL.CreateBlogPostAsync(blogPost);
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating new blog post.");
+                _logger.LogError(ex, ex.Message);
                 result.IsSuccess = false;
                 result.ErrorMessage.Add(ex.Message);
                 return result;
@@ -154,6 +158,22 @@ namespace BusinessLayer.BlogPostService
         Task<Result> IBlogPostService.UpdateBlogPostAsync(string documentId, BlogPost updatedPost)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<string> UploadBlogThumbnailImage(IFormFile formFile)
+        {
+            try
+            {
+                if (formFile != null)
+                {
+                    return await _imageService.UploadImageAsync(formFile);
+                }
+                throw new NotImplementedException("Image is not uploaded");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

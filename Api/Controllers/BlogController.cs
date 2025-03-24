@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.BlogPostService;
+using BusinessLayer.ImageUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.BlogPost;
@@ -11,10 +12,12 @@ namespace Api.Controllers
     public class BlogController : ControllerBase
     {
         private readonly IBlogPostService _blogService;
+        private readonly IFileImageUpload _imageService;
 
-        public BlogController(IBlogPostService blogService)
+        public BlogController(IBlogPostService blogService, IFileImageUpload fileImageUpload)
         {
             _blogService = blogService;
+            _imageService = fileImageUpload;
         }
 
         /// <summary>
@@ -23,27 +26,28 @@ namespace Api.Controllers
         /// </summary>
         [HttpPost("CreateBlogPostAsync")]
         [Authorize(Policy = "LoggedUser")]
-        public async Task<IActionResult> CreateBlogPostAsync([FromBody] BlogPost newPost)
+        public async Task<IActionResult> CreateBlogPostAsync([FromForm] BlogPost blogPost)
         {
-            if (newPost == null)
+
+
+            if (blogPost == null)
+                return BadRequest("Blog post data is required.");
+
+            if (blogPost.File == null)
                 return BadRequest("Blog post data is required.");
 
             string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
 
             if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-            {
                 return Unauthorized("No valid token provided.");
-            }
 
             string token = authHeader.Substring("Bearer ".Length).Trim();
 
             if (string.IsNullOrEmpty(token))
-            {
                 return Unauthorized("No valid token provided.");
-            }
 
-            Result createdPost = await _blogService.CreateBlogPostAsync(newPost);
 
+            Result createdPost = await _blogService.CreateBlogPostAsync(blogPost, blogPost.File);
             return Ok(createdPost);
         }
 

@@ -1,4 +1,5 @@
-﻿using Model.BlogPost;
+﻿using Microsoft.AspNetCore.Http;
+using Model.BlogPost;
 using Model.Utils;
 
 namespace BusinessLayer.BlogPostService
@@ -10,7 +11,7 @@ namespace BusinessLayer.BlogPostService
         Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags);
         Task<Result> GetAllBlogPostsByAuthorAsyncFromToken();
         Task<Result> GetBlogPostByIdAsync(string id);
-        Task<Result> CreateBlogPostAsync(BlogPost blogPost);
+        Task<Result> CreateBlogPostAsync(BlogPost blogPost, IFormFile formFile);
         Task<Result> UpdateBlogPostAsync(string documentId, BlogPost updatedPost);
         Task DeleteBlogPostAsync(string blogPostId);
         Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog);
