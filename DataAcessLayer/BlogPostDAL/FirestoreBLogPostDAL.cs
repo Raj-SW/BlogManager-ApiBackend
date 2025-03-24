@@ -25,9 +25,9 @@ namespace DataAcessLayer.BlogPostDAL
             _logger = logger;
         }
 
-        public async Task<Result> GetAllBlogPostsAsync()
+        public async Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsAsync()
         {
-            Result result = new();
+            GenericResult<IEnumerable<BlogPost>> result = new();
 
             try
             {
@@ -54,9 +54,9 @@ namespace DataAcessLayer.BlogPostDAL
             }
         }
 
-        public async Task<Result?> GetBlogPostByIdAsync(string id)
+        public async Task<GenericResult<BlogPost>> GetBlogPostByIdAsync(string id)
         {
-            Result result = new();
+            GenericResult<BlogPost> result = new();
             try
             {
                 var docRef = _db.Collection(_blogCollectionName).Document(id);
@@ -89,7 +89,7 @@ namespace DataAcessLayer.BlogPostDAL
                 var collectionRef = _db.Collection(_blogCollectionName);
                 var docRef = await collectionRef.AddAsync(blogPost);
                 blogPost.BlogPostDocumentId = docRef.Id;
-                result.ResultObject = blogPost;
+                var updateDoc = await UpdateBlogPostAsync(docRef.Id, blogPost);
                 return result;
             }
             catch (Exception ex)
@@ -108,10 +108,9 @@ namespace DataAcessLayer.BlogPostDAL
             try
             {
                 var docRef = _db.Collection(_blogCollectionName).Document(documentId);
-                // Ensure the document ID remains consistent.
-                updatedPost.BlogPostDocumentId = documentId;
                 await docRef.SetAsync(updatedPost, SetOptions.Overwrite);
-                result.ResultObject = updatedPost;
+                result.IsSuccess = true;
+
                 return result;
             }
             catch (Exception ex)
@@ -144,14 +143,14 @@ namespace DataAcessLayer.BlogPostDAL
             throw new NotImplementedException();
         }
 
-        public Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags)
+        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<Result> GetAllBlogPostsByAuthorAsync(string userName)
+        public async Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorAsync(string userName)
         {
-            Result result = new Result();
+            GenericResult<IEnumerable<BlogPost>> result = new();
 
             try
             {
@@ -184,7 +183,7 @@ namespace DataAcessLayer.BlogPostDAL
             return result;
         }
 
-        public Task<Result> SearchBlogPostAsync(string search)
+        public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogPostAsync(string search)
         {
             throw new NotImplementedException();
         }

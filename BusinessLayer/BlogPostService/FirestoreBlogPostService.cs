@@ -44,7 +44,7 @@ namespace BusinessLayer.BlogPostService
                 blogPost.CreatedBy = userName;
                 blogPost.CreatedDate = DateTime.UtcNow;
                 blogPost.ThumbNailLink = await UploadBlogThumbnailImage(formFile);
-                result = await _blogPostDAL.CreateBlogPostAsync(blogPost);
+                await _blogPostDAL.CreateBlogPostAsync(blogPost);
                 return result;
             }
             catch (Exception ex)
@@ -56,7 +56,7 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task<Result> GetAllBlogPostsAsync()
+        public async Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsAsync()
         {
             try
             {
@@ -69,9 +69,9 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task<Result> GetAllBlogPostsByAuthorAsyncFromToken()
+        public async Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorAsyncFromToken()
         {
-            Result result = new();
+            GenericResult<IEnumerable<BlogPost>> result = new();
             try
             {
                 ClaimsPrincipal userClaims = _httpContextAccessor.HttpContext?.User;
@@ -96,7 +96,7 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task<Result> GetBlogPostByIdAsync(string id)
+        public async Task<GenericResult<BlogPost>> GetBlogPostByIdAsync(string id)
         {
             try
             {
@@ -140,24 +140,42 @@ namespace BusinessLayer.BlogPostService
             await _blogPostDAL.SuggestEditBlogPostAsync(suggestEditBlog);
         }
 
-        public Task<Result> SearchBlogPostAsync(string search)
+        public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogPostAsync(string search)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags)
+        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Result> GetAllBlogPostsByAuthorNameAsync(string AuthorName)
+        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorNameAsync(string AuthorName)
         {
             throw new NotImplementedException();
         }
 
-        Task<Result> IBlogPostService.UpdateBlogPostAsync(string documentId, BlogPost updatedPost)
+        public async Task<Result> UpdateBlogPostAsync(BlogPost updatedPost)
         {
-            throw new NotImplementedException();
+
+            GenericResult<BlogPost> existingPost = await GetBlogPostByIdAsync(updatedPost.BlogPostDocumentId);
+
+            ClaimsPrincipal? userClaims = _httpContextAccessor.HttpContext?.User;
+            string? userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+                return new Result() { IsSuccess = false, ErrorMessage = ["User not logged in"] };
+
+            if (existingPost == null)
+                return new Result() { IsSuccess = false, ErrorMessage = ["Post not Found or User is not authorised to edit"] };
+
+            if (!string.Equals(updatedPost.CreatedBy, userName))
+                new Result() { IsSuccess = false, ErrorMessage = ["User cannot edit other user's post"] };
+
+
+            Result result = await _blogPostDAL.UpdateBlogPostAsync(existingPost.ResultObject.BlogPostDocumentId, updatedPost);
+
+            return result;
         }
 
         public async Task<string> UploadBlogThumbnailImage(IFormFile formFile)

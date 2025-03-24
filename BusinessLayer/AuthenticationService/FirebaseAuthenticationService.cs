@@ -61,9 +61,9 @@ namespace BusinessLayer.AuthenticationService
             return result;
         }
 
-        public async Task<Result> NativeLoginAsync(LoginDto loginDto)
+        public async Task<GenericResult<User>> NativeLoginAsync(LoginDto loginDto)
         {
-            Result result = new Result();
+            GenericResult<User> result = new();
 
             if (string.IsNullOrWhiteSpace(loginDto.Email))
             {
@@ -97,9 +97,9 @@ namespace BusinessLayer.AuthenticationService
             return result;
         }
 
-        public Task<Result> LoginByGoogleAsync(LoginDto loginDto)
+        public Task<GenericResult<User>> LoginByGoogleAsync(LoginDto loginDto)
         {
-            Result result = new Result();
+            GenericResult<User> result = new();
             _authenticationDAL.LoginByGoogleAsync(loginDto);
             return Task.FromResult(result);
         }

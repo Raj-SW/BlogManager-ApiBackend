@@ -93,17 +93,24 @@ namespace Api.Controllers
 
         [HttpPost("UpdatePostAsync")]
         [Authorize(Policy = "LoggedUser")]
-        public async Task<IActionResult> UpdateBlogPostAsync(string id, [FromBody] BlogPost updatedPost)
+        public async Task<IActionResult> UpdateBlogPostAsync([FromBody] BlogPost updatedPost)
         {
+
+            string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                return Unauthorized("No valid token provided.");
+
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+
+            if (string.IsNullOrEmpty(token))
+                return Unauthorized("No valid token provided.");
+
             if (updatedPost == null)
                 return BadRequest("Blog post data is required.");
 
-            var existingPost = await _blogService.GetBlogPostByIdAsync(id);
-            if (existingPost == null)
-                return NotFound($"Blog post with ID {id} not found.");
-
-            await _blogService.UpdateBlogPostAsync(id, updatedPost);
-            return NoContent();
+            Result result = await _blogService.UpdateBlogPostAsync(updatedPost);
+            return Ok(result);
         }
 
         [HttpPost("DeletePostAsync")]

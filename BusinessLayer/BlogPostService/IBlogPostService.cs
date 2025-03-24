@@ -6,13 +6,13 @@ namespace BusinessLayer.BlogPostService
 {
     public interface IBlogPostService
     {
-        Task<Result> SearchBlogPostAsync(string search);
-        Task<Result> GetAllBlogPostsAsync();
-        Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags);
-        Task<Result> GetAllBlogPostsByAuthorAsyncFromToken();
-        Task<Result> GetBlogPostByIdAsync(string id);
+        Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogPostAsync(string search);
+        Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsAsync();
+        Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags);
+        Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorAsyncFromToken();
+        Task<GenericResult<BlogPost>> GetBlogPostByIdAsync(string id);
         Task<Result> CreateBlogPostAsync(BlogPost blogPost, IFormFile formFile);
-        Task<Result> UpdateBlogPostAsync(string documentId, BlogPost updatedPost);
+        Task<Result> UpdateBlogPostAsync(BlogPost updatedPost);
         Task DeleteBlogPostAsync(string blogPostId);
         Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog);
     }

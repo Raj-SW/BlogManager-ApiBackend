@@ -16,7 +16,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // ------------------------------------------------------------------------
-// 1. Read from appsettings.json for Firestore
+// Read from appsettings.json for Firestore
 // ------------------------------------------------------------------------
 var credentialPath = builder.Configuration["GoogleCloud:CredentialPath"];
 var projectId = builder.Configuration["GoogleCloud:ProjectId"];
@@ -27,7 +27,7 @@ if (!string.IsNullOrWhiteSpace(credentialPath))
 }
 
 // ------------------------------------------------------------------------
-// 2. Configure Services
+// Configure Services
 // ------------------------------------------------------------------------
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
@@ -44,7 +44,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // ------------------------------------------------------------------------
-// 3. Register Business/Data Access Services
+// Register Business/Data Access Services
 // ------------------------------------------------------------------------
 builder.Services.AddScoped<IBlogPostService, FirestoreBlogPostService>();
 builder.Services.AddScoped<IAuthenticationService, FirebaseAuthenticationService>();
@@ -58,7 +58,7 @@ builder.Services.AddScoped<ICommentDAL, CommentDAL>();
 builder.Services.AddScoped<IFileImageUpload, CloudinaryImageService>();
 
 // ------------------------------------------------------------------------
-// 4. Configure CORS
+// Configure CORS
 // ------------------------------------------------------------------------
 builder.Services.AddCors(options =>
 {
@@ -72,7 +72,7 @@ builder.Services.AddCors(options =>
 });
 
 // ------------------------------------------------------------------------
-// 5. Authentication & Authorization for JwT Token
+// Authentication & Authorization for JwT Token
 // ------------------------------------------------------------------------
 string? jwtIssuer = builder.Configuration["Jwt:Issuer"];
 string? jwtAudience = builder.Configuration["Jwt:Audience"];
@@ -122,12 +122,12 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 
 
 // ------------------------------------------------------------------------
-// 6. Build the App
+// Build the App
 // ------------------------------------------------------------------------
 var app = builder.Build();
 
 // ------------------------------------------------------------------------
-// 7. Middleware Pipeline
+// Middleware Pipeline
 // ------------------------------------------------------------------------
 app.UseSession();
 

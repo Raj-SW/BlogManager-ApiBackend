@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.AuthenthicationService;
 using Microsoft.AspNetCore.Mvc;
 using Model.DTO.Authentication;
+using Model.User;
 using Model.Utils;
 
 namespace Api.Controllers
@@ -28,7 +29,7 @@ namespace Api.Controllers
         [HttpPost("NativeLogin")]
         public async Task<IActionResult> NativeLoginAsync([FromBody] LoginDto loginDto)
         {
-            Result result = await _authenticationService.NativeLoginAsync(loginDto);
+            GenericResult<User> result = await _authenticationService.NativeLoginAsync(loginDto);
             return Ok(result);
         }
 
