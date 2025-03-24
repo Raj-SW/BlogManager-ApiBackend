@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.BlogPost;
+using Model.Utils;
 
 namespace Api.Controllers
 {
@@ -17,23 +18,35 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// POST: api/Blog
+        /// POST: api/Blog/CreateBlogPostAsync
         /// Creates a new blog post.
         /// </summary>
         [HttpPost("CreateBlogPostAsync")]
-        public async Task<IActionResult> CreateBlogPostAsync(BlogPost newPost)
+        [Authorize(Policy = "LoggedUser")]
+        public async Task<IActionResult> CreateBlogPostAsync([FromBody] BlogPost newPost)
         {
             if (newPost == null)
                 return BadRequest("Blog post data is required.");
 
-            var createdPost = await _blogService.CreateBlogPostAsync(newPost);
+            string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return Unauthorized("No valid token provided.");
+            }
+
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No valid token provided.");
+            }
+
+            Result createdPost = await _blogService.CreateBlogPostAsync(newPost);
+
             return Ok(createdPost);
         }
 
-        /// <summary>
-        /// GET: api/Blog
-        /// Retrieves all blog posts.
-        /// </summary>
         [HttpGet("GetAllBlogPostsAsync")]
         public async Task<IActionResult> GetAllBlogPostsAsync()
         {
@@ -41,12 +54,8 @@ namespace Api.Controllers
             return Ok(posts);
         }
 
-        /// <summary>
-        /// GET: api/Blog/{id}
-        /// Retrieves a blog post by its ID.
-        /// </summary>
-        [HttpGet("GetBlogPostByIdAsync")]
-        public async Task<IActionResult> GetBlogPostByIdAsync(string id)
+        [HttpGet("GetBlogPostByBlogPostIdAsync")]
+        public async Task<IActionResult> GetBlogPostByBlogPostIdAsync(string id)
         {
             var post = await _blogService.GetBlogPostByIdAsync(id);
             if (post == null)
@@ -54,12 +63,33 @@ namespace Api.Controllers
             return Ok(post);
         }
 
-        /// <summary>
-        /// PUT: api/Blog/{id}
-        /// Updates an existing blog post.
-        /// </summary>
+        [HttpGet("GetAllBlogPostByUserNameAsync")]
+        [Authorize(Policy = "LoggedUser")]
+        public async Task<IActionResult> GetAllBlogPostByUserNameAsync()
+        {
+
+            string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return Unauthorized("No valid token provided.");
+            }
+
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized("No valid token provided.");
+            }
+
+            var result = await _blogService.GetAllBlogPostsByAuthorAsyncFromToken();
+
+            return Ok(result);
+        }
+
         [HttpPost("UpdatePostAsync")]
-        public async Task<IActionResult> UpdatePostAsync(string id, [FromBody] BlogPost updatedPost)
+        [Authorize(Policy = "LoggedUser")]
+        public async Task<IActionResult> UpdateBlogPostAsync(string id, [FromBody] BlogPost updatedPost)
         {
             if (updatedPost == null)
                 return BadRequest("Blog post data is required.");
@@ -72,13 +102,9 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// DELETE: api/Blog/{id}
-        /// Deletes a blog post.
-        /// </summary>
-        [Authorize(Policy = "LoggedUser")]
         [HttpPost("DeletePostAsync")]
-        public async Task<IActionResult> DeletePostAsync(string id)
+        [Authorize(Policy = "LoggedUser")]
+        public async Task<IActionResult> DeleteBlogPostAsync(string id)
         {
             var existingPost = await _blogService.GetBlogPostByIdAsync(id);
             if (existingPost == null)

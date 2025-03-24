@@ -8,7 +8,7 @@ namespace BusinessLayer.BlogPostService
         Task<Result> SearchBlogPostAsync(string search);
         Task<Result> GetAllBlogPostsAsync();
         Task<Result> GetAllBlogPostsByTagsAsync(List<string> tags);
-        Task<Result> GetAllBlogPostsByAuthorAsync(string AuthorName);
+        Task<Result> GetAllBlogPostsByAuthorAsyncFromToken();
         Task<Result> GetBlogPostByIdAsync(string id);
         Task<Result> CreateBlogPostAsync(BlogPost blogPost);
         Task<Result> UpdateBlogPostAsync(string documentId, BlogPost updatedPost);

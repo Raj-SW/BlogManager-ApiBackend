@@ -149,9 +149,39 @@ namespace DataAcessLayer.BlogPostDAL
             throw new NotImplementedException();
         }
 
-        public Task<Result> GetAllBlogPostsByAuthorAsync(string AuthorName)
+        public async Task<Result> GetAllBlogPostsByAuthorAsync(string userName)
         {
-            throw new NotImplementedException();
+            Result result = new Result();
+
+            try
+            {
+                var collectionRef = _db.Collection("BlogPosts");
+
+                var query = collectionRef.WhereEqualTo("CreatedBy", userName);
+
+                var snapshot = await query.GetSnapshotAsync();
+
+                List<BlogPost> blogPosts = new List<BlogPost>();
+                foreach (var doc in snapshot.Documents)
+                {
+                    if (doc.Exists)
+                    {
+                        BlogPost blogPost = doc.ConvertTo<BlogPost>();
+                        blogPost.BlogPostDocumentId = doc.Id;
+                        blogPosts.Add(blogPost);
+                    }
+                }
+
+                result.IsSuccess = true;
+                result.ResultObject = blogPosts;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+            }
+
+            return result;
         }
 
         public Task<Result> SearchBlogPostAsync(string search)

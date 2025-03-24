@@ -1,7 +1,9 @@
 ﻿using DataAcessLayer.BlogPostDAL;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Model.BlogPost;
 using Model.Utils;
+using System.Security.Claims;
 
 namespace BusinessLayer.BlogPostService
 {
@@ -9,11 +11,45 @@ namespace BusinessLayer.BlogPostService
     {
         private readonly IBlogPostDAL _blogPostDAL;
         private readonly ILogger<FirestoreBlogPostService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public FirestoreBlogPostService(ILogger<FirestoreBlogPostService> logger, IBlogPostDAL blogPostDAL)
+        public FirestoreBlogPostService(
+            ILogger<FirestoreBlogPostService> logger,
+            IBlogPostDAL blogPostDAL,
+            IHttpContextAccessor httpContextAccessor)
         {
             _blogPostDAL = blogPostDAL;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public async Task<Result> CreateBlogPostAsync(BlogPost blogPost)
+        {
+            Result result = new();
+            try
+            {
+                ClaimsPrincipal userClaims = _httpContextAccessor.HttpContext?.User;
+                string userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (string.IsNullOrEmpty(userName))
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage.Add("User not authenticated");
+                    return result;
+                }
+
+                blogPost.CreatedBy = userName;
+                blogPost.CreatedDate = DateTime.UtcNow;
+                result = await _blogPostDAL.CreateBlogPostAsync(blogPost);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating new blog post.");
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+                return result;
+            }
         }
 
         public async Task<Result> GetAllBlogPostsAsync()
@@ -29,6 +65,33 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
+        public async Task<Result> GetAllBlogPostsByAuthorAsyncFromToken()
+        {
+            Result result = new();
+            try
+            {
+                ClaimsPrincipal userClaims = _httpContextAccessor.HttpContext?.User;
+                string userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (string.IsNullOrEmpty(userName))
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage.Add("User not authenticated");
+                    return result;
+                }
+
+                result = await _blogPostDAL.GetAllBlogPostsByAuthorAsync(userName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching blog post.");
+                result.IsSuccess = false;
+                result.ErrorMessage.Add(ex.Message);
+                return result;
+            }
+        }
+
         public async Task<Result> GetBlogPostByIdAsync(string id)
         {
             try
@@ -38,19 +101,6 @@ namespace BusinessLayer.BlogPostService
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error retrieving blog post with ID {id}.");
-                throw;
-            }
-        }
-
-        public async Task<Result> CreateBlogPostAsync(BlogPost blogPost)
-        {
-            try
-            {
-                return await _blogPostDAL.CreateBlogPostAsync(blogPost);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating new blog post.");
                 throw;
             }
         }
@@ -96,7 +146,7 @@ namespace BusinessLayer.BlogPostService
             throw new NotImplementedException();
         }
 
-        public Task<Result> GetAllBlogPostsByAuthorAsync(string AuthorName)
+        public Task<Result> GetAllBlogPostsByAuthorNameAsync(string AuthorName)
         {
             throw new NotImplementedException();
         }

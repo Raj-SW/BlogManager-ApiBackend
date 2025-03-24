@@ -3,6 +3,7 @@ using BusinessLayer.AuthenticationService;
 using BusinessLayer.BlogPostService;
 using BusinessLayer.CommentService;
 using BusinessLayer.UserService;
+using CloudinaryDotNet;
 using DataAcessLayer.AuthenticationDAL;
 using DataAcessLayer.BlogPostDAL;
 using DataAcessLayer.CommentDAL;
@@ -28,6 +29,7 @@ if (!string.IsNullOrWhiteSpace(credentialPath))
 // 2. Configure Services
 // ------------------------------------------------------------------------
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSession(options =>
 {
@@ -110,6 +112,18 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("LoggedUser", "Editor");
     });
 });
+
+//-------------------------------------------------------------------------
+// File hosting
+//-------------------------------------------------------------------------
+// Set your Cloudinary credentials
+//=================================
+string? apiKeyCloudinary = builder.Configuration["Cloudinary:ApiKey"];
+string? apiSecretCloudinary = builder.Configuration["Cloudinary:ApiSecret"];
+string? cloudNameCloudinary = builder.Configuration["Cloudinary:CloudName"];
+
+Cloudinary cloudinary = new Cloudinary($"cloudinary://{apiKeyCloudinary}:{apiSecretCloudinary}@{cloudNameCloudinary}");
+cloudinary.Api.Secure = true;
 
 // ------------------------------------------------------------------------
 // 6. Build the App

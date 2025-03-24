@@ -84,7 +84,7 @@ namespace BusinessLayer.AuthenticationService
 
                 User? user = await GetUserByEmailAsync(loginDto.Email);
                 var secretKey = _config["Jwt:SecretKey"];
-                user.Token = JwtManager.GenerateToken(user.UserId, user.Role, secretKey);
+                user.Token = JwtManager.GenerateToken(user.UserId, user.UserName, user.Role, secretKey);
 
                 result.ResultObject = user;
             }
