@@ -13,7 +13,7 @@ namespace BusinessLayer.BlogPostService
         Task<GenericResult<BlogPost>> GetBlogPostByIdAsync(string id);
         Task<Result> CreateBlogPostAsync(BlogPost blogPost, IFormFile formFile);
         Task<Result> UpdateBlogPostAsync(BlogPost updatedPost);
-        Task DeleteBlogPostAsync(string blogPostId);
+        Task<Result> DeleteBlogPostAsync(string blogPostId);
         Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog);
     }
 }

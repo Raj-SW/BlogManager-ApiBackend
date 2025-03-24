@@ -117,12 +117,8 @@ namespace Api.Controllers
         [Authorize(Policy = "LoggedUser")]
         public async Task<IActionResult> DeleteBlogPostAsync(string id)
         {
-            var existingPost = await _blogService.GetBlogPostByIdAsync(id);
-            if (existingPost == null)
-                return NotFound($"Blog post with ID {id} not found.");
-
-            await _blogService.DeleteBlogPostAsync(id);
-            return NoContent();
+            Result result = await _blogService.DeleteBlogPostAsync(id);
+            return Ok(result);
         }
     }
 }

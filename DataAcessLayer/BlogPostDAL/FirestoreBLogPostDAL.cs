@@ -124,8 +124,6 @@ namespace DataAcessLayer.BlogPostDAL
 
         public async Task DeleteBlogPostAsync(string id)
         {
-            Result result = new();
-
             try
             {
                 var docRef = _db.Collection(_blogCollectionName).Document(id);

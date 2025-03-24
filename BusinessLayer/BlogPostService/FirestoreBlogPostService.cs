@@ -122,16 +122,36 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task DeleteBlogPostAsync(string id)
+        public async Task<Result> DeleteBlogPostAsync(string id)
         {
             try
             {
+                GenericResult<BlogPost> existingPost = await GetBlogPostByIdAsync(id);
+
+                if ((existingPost.ResultObject == null))
+                    return new Result { IsSuccess = false, ErrorMessage = ["Blog not found"] };
+
+
+                ClaimsPrincipal? userClaims = _httpContextAccessor.HttpContext?.User;
+                string? userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (string.IsNullOrEmpty(userName))
+                    return new Result() { IsSuccess = false, ErrorMessage = ["User not logged in"] };
+
+                if (existingPost == null)
+                    return new Result() { IsSuccess = false, ErrorMessage = ["Post not Found or User is not authorised to edit"] };
+
+                if (!string.Equals(existingPost.ResultObject!.CreatedBy, userName))
+                    new Result() { IsSuccess = false, ErrorMessage = ["User cannot edit other user's post"] };
+
                 await _blogPostDAL.DeleteBlogPostAsync(id);
+
+                return new Result() { IsSuccess = true };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error deleting blog post with ID {id}.");
-                throw;
+                return new Result() { IsSuccess = false, ErrorMessage = [ex.Message] };
             }
         }
 
