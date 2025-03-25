@@ -58,7 +58,7 @@ namespace Api.Controllers
             return Ok(posts);
         }
 
-        [HttpGet("GetBlogPostByBlogPostIdAsync")]
+        [HttpGet("GetBlogPostByBlogPostIdAsync/{id}")]
         public async Task<IActionResult> GetBlogPostByBlogPostIdAsync(string id)
         {
             var post = await _blogService.GetBlogPostByIdAsync(id);
@@ -113,7 +113,7 @@ namespace Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("DeletePostAsync")]
+        [HttpPost("DeletePostAsync/{id}")]
         [Authorize(Policy = "LoggedUser")]
         public async Task<IActionResult> DeleteBlogPostAsync(string id)
         {

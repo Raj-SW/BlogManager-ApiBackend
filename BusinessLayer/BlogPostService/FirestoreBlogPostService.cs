@@ -127,19 +127,14 @@ namespace BusinessLayer.BlogPostService
             try
             {
                 GenericResult<BlogPost> existingPost = await GetBlogPostByIdAsync(id);
-
-                if ((existingPost.ResultObject == null))
-                    return new Result { IsSuccess = false, ErrorMessage = ["Blog not found"] };
-
-
                 ClaimsPrincipal? userClaims = _httpContextAccessor.HttpContext?.User;
                 string? userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
 
                 if (string.IsNullOrEmpty(userName))
                     return new Result() { IsSuccess = false, ErrorMessage = ["User not logged in"] };
 
-                if (existingPost == null)
-                    return new Result() { IsSuccess = false, ErrorMessage = ["Post not Found or User is not authorised to edit"] };
+                if (existingPost.ResultObject == null)
+                    return new Result() { IsSuccess = false, ErrorMessage = ["Blog not Found"] };
 
                 if (!string.Equals(existingPost.ResultObject!.CreatedBy, userName))
                     new Result() { IsSuccess = false, ErrorMessage = ["User cannot edit other user's post"] };
