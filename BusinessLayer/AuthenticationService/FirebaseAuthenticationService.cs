@@ -100,11 +100,6 @@ namespace BusinessLayer.AuthenticationService
             return result;
         }
 
-        public async Task LogoutAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         private async Task<User?> GetUserByEmailAsync(string email) => await _userDAL.GetUserByEmailAsync(email);
     }
 }

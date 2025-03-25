@@ -150,26 +150,6 @@ namespace BusinessLayer.BlogPostService
             }
         }
 
-        public async Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
-        {
-            await _blogPostDAL.SuggestEditBlogPostAsync(suggestEditBlog);
-        }
-
-        public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogPostAsync(string search)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorNameAsync(string AuthorName)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Result> UpdateBlogPostAsync(BlogPost updatedPost)
         {
 
@@ -205,8 +185,28 @@ namespace BusinessLayer.BlogPostService
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new NotImplementedException("Error in uploading image");
             }
         }
+
+        public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria)
+        {
+            return _blogPostDAL.SearchBlogAsync(searchCriteria);
+        }
+
+        public Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorNameAsync(string AuthorName)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

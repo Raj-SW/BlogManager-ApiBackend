@@ -6,6 +6,7 @@ namespace Api.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
+        //TODO: Add commenting on blogs feature
         // GET: api/<CommentController>
         [HttpGet]
         public IEnumerable<string> Get()

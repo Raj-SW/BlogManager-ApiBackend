@@ -5,7 +5,6 @@ namespace DataAcessLayer.BlogPostDAL
 {
     public interface IBlogPostDAL
     {
-        Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogPostAsync(string search);
         Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsAsync();
         Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags);
         Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorAsync(string AuthorName);
@@ -14,5 +13,6 @@ namespace DataAcessLayer.BlogPostDAL
         Task<Result> UpdateBlogPostAsync(string documentId, BlogPost updatedPost);
         Task DeleteBlogPostAsync(string blogPostId);
         Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog);
+        Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria);
     }
 }

@@ -85,7 +85,6 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    // Configure Token Validation
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -118,12 +117,14 @@ builder.Services.AddAuthorization(options =>
 //-------------------------------------------------------------------------
 // File hosting
 //-------------------------------------------------------------------------
+
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 
 // ------------------------------------------------------------------------
 // Build the App
 // ------------------------------------------------------------------------
+
 var app = builder.Build();
 
 // ------------------------------------------------------------------------
@@ -139,7 +140,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReactApp");
 
-// Enable Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -22,6 +22,7 @@ namespace Model.DTO.Authentication
 
         [Required(ErrorMessage = "Confirm password is required")]
         [Compare("Password", ErrorMessage = "Passwords do not match")]
+
         public required string ConfirmPassword { get; set; }
     }
 }

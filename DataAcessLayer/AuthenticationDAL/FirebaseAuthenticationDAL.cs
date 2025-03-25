@@ -37,11 +37,6 @@ namespace DataAcessLayer.AuthenticationDAL
             throw new NotImplementedException();
         }
 
-        public async Task LogoutAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<User> FindUserByEmail(string email)
         {
             return await _firebaseAuthProvider.GetUserAsync(email);

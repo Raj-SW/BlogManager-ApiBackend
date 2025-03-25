@@ -20,10 +20,6 @@ namespace Api.Controllers
             _imageService = fileImageUpload;
         }
 
-        /// <summary>
-        /// POST: api/Blog/CreateBlogPostAsync
-        /// Creates a new blog post.
-        /// </summary>
         [HttpPost("CreateBlogPostAsync")]
         [Authorize(Policy = "LoggedUser")]
         public async Task<IActionResult> CreateBlogPostAsync([FromForm] BlogPost blogPost)
@@ -34,7 +30,7 @@ namespace Api.Controllers
                 return BadRequest("Blog post data is required.");
 
             if (blogPost.File == null)
-                return BadRequest("Blog post data is required.");
+                return BadRequest("Blog post thumbail is required.");
 
             string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
 
@@ -118,6 +114,13 @@ namespace Api.Controllers
         public async Task<IActionResult> DeleteBlogPostAsync(string id)
         {
             Result result = await _blogService.DeleteBlogPostAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("SearchBlogAsync")]
+        public async Task<IActionResult> SearchBlogAsync(string searchCriteria)
+        {
+            GenericResult<IEnumerable<BlogPost>> result = await _blogService.SearchBlogAsync(searchCriteria);
             return Ok(result);
         }
     }

@@ -9,6 +9,5 @@ namespace BusinessLayer.AuthenthicationService
     {
         Task<Result> NativeRegisterAsync(NativeSignUpDto nativeSignUpDTO);
         Task<GenericResult<User>> NativeLoginAsync(LoginDto loginDto);
-        Task LogoutAsync();
     }
 }

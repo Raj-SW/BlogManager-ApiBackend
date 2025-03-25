@@ -136,16 +136,6 @@ namespace DataAcessLayer.BlogPostDAL
             }
         }
 
-        public Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByAuthorAsync(string userName)
         {
             GenericResult<IEnumerable<BlogPost>> result = new();
@@ -181,7 +171,54 @@ namespace DataAcessLayer.BlogPostDAL
             return result;
         }
 
-        public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogPostAsync(string search)
+        public async Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria)
+        {
+            GenericResult<IEnumerable<BlogPost>> blogList = new();
+            try
+            {
+                var collectionRef = _db.Collection(_blogCollectionName);
+                var snapshot = await collectionRef.GetSnapshotAsync();
+
+                var allPosts = snapshot.Documents
+                    .Select(doc => doc.ConvertTo<BlogPost>())
+                    .ToList();
+
+                if (string.IsNullOrWhiteSpace(searchCriteria))
+                {
+                    blogList.ResultObject = allPosts;
+                    blogList.IsSuccess = true;
+
+                    return blogList;
+                }
+
+                string lowerSearch = searchCriteria.ToLower();
+
+                var filtered = allPosts.Where(post =>
+                    (post.Title ?? "").ToLower().Contains(lowerSearch) ||
+                    (post.Content ?? "").ToLower().Contains(lowerSearch) ||
+                    (post.CreatedBy ?? "").ToLower().Contains(lowerSearch)
+                ).ToList();
+
+                blogList.ResultObject = filtered;
+                blogList.IsSuccess = true;
+
+                return blogList;
+            }
+            catch (Exception ex)
+            {
+                blogList.IsSuccess.Equals(false);
+                blogList.ErrorMessage.Add(ex.Message);
+
+                return blogList;
+            }
+        }
+
+        public Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
         {
             throw new NotImplementedException();
         }
