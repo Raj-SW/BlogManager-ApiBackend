@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.AuthenthicationService;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Model.DTO.Authentication;
 using Model.User;
@@ -10,10 +11,10 @@ namespace Api.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthService _authenticationService;
         private readonly IConfiguration _config;
 
-        public AuthenticationController(IAuthenticationService authenticationService, IConfiguration config)
+        public AuthenticationController(IAuthService authenticationService, IConfiguration config)
         {
             _authenticationService = authenticationService;
             _config = config;
@@ -33,19 +34,11 @@ namespace Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("LoginByGoogleAsync")]
-        public async Task<IActionResult> LoginByGoogleAsync([FromBody] LoginDto loginDto)
-        {
-
-            var result = await _authenticationService.LoginByGoogleAsync(loginDto);
-            return Ok(result);
-        }
-
         [HttpPost("LogoutAsync")]
         public async Task<IActionResult> LogoutAsync()
         {
-            await _authenticationService.LogoutAsync();
-            return Ok();
+            await HttpContext.SignOutAsync();
+            return Ok(new { message = "Logged out successfully" });
         }
     }
 }

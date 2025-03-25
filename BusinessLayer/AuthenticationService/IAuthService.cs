@@ -5,11 +5,10 @@ using Model.Utils;
 
 namespace BusinessLayer.AuthenthicationService
 {
-    public interface IAuthenticationService
+    public interface IAuthService
     {
         Task<Result> NativeRegisterAsync(NativeSignUpDto nativeSignUpDTO);
         Task<GenericResult<User>> NativeLoginAsync(LoginDto loginDto);
-        Task<GenericResult<User>> LoginByGoogleAsync(LoginDto loginDto);
         Task LogoutAsync();
     }
 }

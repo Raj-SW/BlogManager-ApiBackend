@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen();
 // Register Business/Data Access Services
 // ------------------------------------------------------------------------
 builder.Services.AddScoped<IBlogPostService, FirestoreBlogPostService>();
-builder.Services.AddScoped<IAuthenticationService, FirebaseAuthenticationService>();
+builder.Services.AddScoped<IAuthService, FirebaseAuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 

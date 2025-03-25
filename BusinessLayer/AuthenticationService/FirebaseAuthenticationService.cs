@@ -10,7 +10,7 @@ using User = Model.User.User;
 
 namespace BusinessLayer.AuthenticationService
 {
-    public class FirebaseAuthenticationService(IAuthenticationDAL authenticationDAL, IUserDAL userDAL, IConfiguration configuration) : IAuthenticationService
+    public class FirebaseAuthenticationService(IAuthenticationDAL authenticationDAL, IUserDAL userDAL, IConfiguration configuration) : IAuthService
     {
         private readonly IAuthenticationDAL _authenticationDAL = authenticationDAL;
         private readonly IConfiguration _config = configuration;
@@ -19,7 +19,7 @@ namespace BusinessLayer.AuthenticationService
         public async Task<Result> NativeRegisterAsync(NativeSignUpDto nativeSignUpDTO)
         {
             Result result = new();
-            User user = null;
+            User user = new();
 
             try
             {
@@ -30,6 +30,9 @@ namespace BusinessLayer.AuthenticationService
                     FirebaseAuthLink createdUserInfo = await _authenticationDAL.NativeRegisterAsync(nativeSignUpDTO);
                     user.UserId = createdUserInfo.User.LocalId;
                     user.Email = createdUserInfo.User.Email;
+                    user.FirstName = nativeSignUpDTO.FirstName;
+                    user.LastName = nativeSignUpDTO.LastName;
+                    user.UserName = nativeSignUpDTO.UserName;
                     user.Role = RoleEnum.LoggedUser.ToString();
 
                     await _userDAL.CreateUserAsync(user);
@@ -47,7 +50,7 @@ namespace BusinessLayer.AuthenticationService
                 if (isExistingUser.UserName == nativeSignUpDTO.UserName)
                 {
                     result.IsSuccess = false;
-                    result.ErrorMessage.Add("User namer already taken");
+                    result.ErrorMessage.Add("User name already taken");
                 }
 
                 return result;
@@ -95,13 +98,6 @@ namespace BusinessLayer.AuthenticationService
             }
 
             return result;
-        }
-
-        public Task<GenericResult<User>> LoginByGoogleAsync(LoginDto loginDto)
-        {
-            GenericResult<User> result = new();
-            _authenticationDAL.LoginByGoogleAsync(loginDto);
-            return Task.FromResult(result);
         }
 
         public async Task LogoutAsync()
