@@ -1,7 +1,22 @@
-Install frontend dependencies:
 
-npm i
+## Installation
 
-Run frontend
+To run frontend project
 
-npm run dev
+Navigate to frontend directory
+
+```bash
+  cd "your frontend-local-directory"
+```
+
+Install dependencies
+
+```bash
+  npm i
+```
+Run project
+
+```bash
+  npm run dev 
+```
+  
