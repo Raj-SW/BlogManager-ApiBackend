@@ -7,10 +7,12 @@ using BusinessLayer.UserService;
 using DataAcessLayer.AuthenticationDAL;
 using DataAcessLayer.BlogPostDAL;
 using DataAcessLayer.CommentDAL;
+using DataAcessLayer.Common;
 using DataAcessLayer.UserDAL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Model.Utils;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,16 +48,18 @@ builder.Services.AddSwaggerGen();
 // ------------------------------------------------------------------------
 // Register Business/Data Access Services
 // ------------------------------------------------------------------------
-builder.Services.AddScoped<IBlogPostService, FirestoreBlogPostService>();
-builder.Services.AddScoped<IAuthService, FirebaseAuthenticationService>();
+builder.Services.AddScoped<IBlogPostService, BlogPostService>();
+builder.Services.AddScoped<IAuthService, NativeAuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 
-builder.Services.AddScoped<IBlogPostDAL, FirestoreBlogPostDAL>();
-builder.Services.AddScoped<IAuthenticationDAL, FirebaseAuthenticationDAL>();
+builder.Services.AddScoped<IBlogPostDAL, BLogPostDAL>();
+builder.Services.AddScoped<IAuthenticationDAL, NativeAuthenticationDAL>();
 builder.Services.AddScoped<IUserDAL, UserDAL>();
 builder.Services.AddScoped<ICommentDAL, CommentDAL>();
 builder.Services.AddScoped<IFileImageUpload, CloudinaryImageService>();
+builder.Services.AddScoped<IDataAccessLayer, MSSQLDataAccessLayer>();
+builder.Services.AddScoped<IDBCommand, DBCommand>();
 
 // ------------------------------------------------------------------------
 // Configure CORS
@@ -120,6 +124,15 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
+//-------------------------------------------------------------------------
+// File hosting
+//-------------------------------------------------------------------------
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("log.txt",
+        rollingInterval: RollingInterval.Month,
+        rollOnFileSizeLimit: false)
+    .CreateLogger();
 
 // ------------------------------------------------------------------------
 // Build the App

@@ -55,7 +55,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("GetBlogPostByBlogPostIdAsync/{id}")]
-        public async Task<IActionResult> GetBlogPostByBlogPostIdAsync(string id)
+        public async Task<IActionResult> GetBlogPostByBlogPostIdAsync(int id)
         {
             var post = await _blogService.GetBlogPostByIdAsync(id);
             if (post == null)
@@ -63,9 +63,9 @@ namespace Api.Controllers
             return Ok(post);
         }
 
-        [HttpGet("GetAllBlogPostByUserNameAsync")]
+        [HttpGet("GetSelfBlogsAsync")]
         [Authorize(Policy = "LoggedUser")]
-        public async Task<IActionResult> GetAllBlogPostByUserNameAsync()
+        public async Task<IActionResult> GetSelfBlogsAsync()
         {
 
             string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
@@ -82,7 +82,7 @@ namespace Api.Controllers
                 return Unauthorized("No valid token provided.");
             }
 
-            var result = await _blogService.GetAllBlogPostsByAuthorAsyncFromToken();
+            var result = await _blogService.GetAllBlogPostsByAuthorUserNameAsyncFromToken();
 
             return Ok(result);
         }

@@ -11,7 +11,7 @@ public class CloudinaryImageService : IFileImageUpload
 
     public CloudinaryImageService(IOptions<CloudinarySettings> config)
     {
-        var account = new Account(
+        Account account = new Account(
             config.Value.CloudName,
             config.Value.ApiKey,
             config.Value.ApiSecret

@@ -24,5 +24,9 @@ namespace Model.DTO.Authentication
         [Compare("Password", ErrorMessage = "Passwords do not match")]
 
         public required string ConfirmPassword { get; set; }
+
+        public string? Role { get; set; }
+
+        public byte[]? PasswordHash { get; set; }
     }
 }

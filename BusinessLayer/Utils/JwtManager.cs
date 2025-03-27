@@ -7,18 +7,18 @@ public static class JwtManager
 {
     public static string GenerateToken(string userId, string userName, string role, string secretKey, int expireMinutes = 20)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var now = DateTime.UtcNow;
-        var claims = new List<Claim>
+        DateTime now = DateTime.UtcNow;
+        List<Claim> claims = new List<Claim>
         {
             new Claim(ClaimTypes.Role, role),
             new Claim(ClaimTypes.Name, userName),
             new Claim("UserId", userId),
         };
 
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new JwtSecurityToken(
             issuer: "blog-manager-db",
             audience: "myapp-users",
             claims: claims,

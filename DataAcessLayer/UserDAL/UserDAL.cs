@@ -1,166 +1,116 @@
-﻿using Google.Cloud.Firestore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using DataAcessLayer.Common;
+using Microsoft.Data.SqlClient;
+using Model.DTO.Authentication;
 using Model.User;
-using FirebaseUser = Firebase.Auth.User;
+using Serilog;
 
 namespace DataAcessLayer.UserDAL
 {
     public class UserDAL : IUserDAL
     {
-        private readonly FirestoreDb _db;
-        private readonly ILogger<UserDAL> _logger;
-        private readonly string _userCollectionName;
-        private readonly string _credentialPath;
-        private readonly string _projectId;
-
-        public UserDAL(ILogger<UserDAL> logger, IConfiguration config)
+        private readonly IDBCommand _dBCommand;
+        public UserDAL(IDBCommand dBCommand)
         {
-            _logger = logger;
-
-            _credentialPath = config["GoogleCloud:CredentialPath"]
-                              ?? throw new ArgumentNullException("GoogleCloud:CredentialPath not found in configuration.");
-
-            _projectId = config["GoogleCloud:ProjectId"]
-                         ?? throw new ArgumentNullException("GoogleCloud:ProjectId not found in configuration.");
-
-            _userCollectionName = config["GoogleCloud:UserCollectionName"] ?? "Users";
-            _db = FirestoreDb.Create(_projectId);
+            _dBCommand = dBCommand;
         }
 
-        public async Task<IEnumerable<FirebaseUser>> GetAllUsersAsync()
+        public async Task<List<User>> GetAllUsersAsync()
         {
             try
             {
-                var snapshot = await _db.Collection(_userCollectionName).GetSnapshotAsync();
-                var users = new List<FirebaseUser>();
+                const string GET_All_USERS = @"SELECT TOP 1 * FROM [UserInfo]";
+                List<User> userList = await _dBCommand.GetDataAsync<User>(GET_All_USERS);
 
-                foreach (var doc in snapshot.Documents)
-                {
-                    if (doc.Exists)
-                    {
-                        var user = doc.ConvertTo<FirebaseUser>();
-                        user.LocalId = doc.Id;
-                        users.Add(user);
-                    }
-                }
-                return users;
+                return userList;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving all users.");
-                throw;
+                Log.Error("Error retrieving all users.", ex);
+                throw ex;
             }
         }
 
-        public async Task<FirebaseUser?> GetUserByDocumentIdAsync(string documentId)
+        public async Task<User?> GetUserByUserIdAsync(int userId)
         {
             try
             {
-                var docRef = _db.Collection(_userCollectionName).Document(documentId);
-                var snapshot = await docRef.GetSnapshotAsync();
+                const string GET_USER_BY_ID = @"SELECT TOP 1 * FROM [UserInfo] WHERE UserId = @UserId";
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@UserId", userId));
+                List<User> user = await _dBCommand.GetDataWithConditionsAsync<User>(GET_USER_BY_ID, parameters);
 
-                if (snapshot.Exists)
-                {
-                    var user = snapshot.ConvertTo<FirebaseUser>();
-                    user.LocalId = docRef.Id;
-                    return user;
-                }
-                return null;
+                return user.First();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error retrieving user with Document ID {documentId}.");
-                throw;
+                Log.Error($"Error user with id: {userId}", ex);
+                throw ex;
             }
         }
+
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             try
             {
-                Query query = _db.Collection(_userCollectionName).WhereEqualTo("Email", email);
-                QuerySnapshot snapshot = await query.GetSnapshotAsync();
+                const string GET_USER_BY_EMAIL = @"SELECT TOP 1 * FROM [UserInfo] WHERE Email = @Email";
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@Email", email.ToLower()));
+                List<User> user = await _dBCommand.GetDataWithConditionsAsync<User>(GET_USER_BY_EMAIL, parameters);
 
-                if (snapshot.Documents.Count > 0)
+                if (user.Count == 0)
                 {
-                    DocumentSnapshot doc = snapshot.Documents[0];
-                    User user = doc.ConvertTo<User>();
-
-                    return user;
+                    return null;
                 }
-                return null;
+                return user.First();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error retrieving user with email {email}.");
-                throw;
+                Log.Error($"Error fetching user with email: {email}", ex);
+                throw ex;
             }
         }
 
-        public async Task<FirebaseUser?> GetUserByUserIdAsync(string userId)
+        public async Task<User?> GetUserByUserName(string userName)
         {
             try
             {
-                Query query = _db.Collection(_userCollectionName).WhereEqualTo("UserId", userId);
-                var snapshot = await query.GetSnapshotAsync();
+                const string GET_USER_BY_USERNAME = @"SELECT TOP 1 * FROM [UserInfo] WHERE UserName = @UserName";
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@UserName", userName.ToLower()));
+                List<User> user = await _dBCommand.GetDataWithConditionsAsync<User>(GET_USER_BY_USERNAME, parameters);
 
-                if (snapshot.Documents.Count > 0)
+                if (user.Count == 0)
                 {
-                    var doc = snapshot.Documents[0];
-                    var user = doc.ConvertTo<FirebaseUser>();
-                    user.LocalId = doc.Id;
-                    return user;
+                    return null;
                 }
-                return null;
+
+                return user.First();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error retrieving user with UserId {userId}.");
-                throw;
+                Log.Error($"Error fetching user with UserName: {userName}", ex);
+                throw ex;
             }
         }
 
-        public async Task<bool> CreateUserAsync(User user)
+        public async Task InsertUserAsync(NativeSignUpDto user)
         {
             try
             {
-                var collectionRef = _db.Collection(_userCollectionName);
-                var docRef = await collectionRef.AddAsync(user);
-                user.UserId = docRef.Id;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating new user.");
-                throw;
-            }
-        }
+                const string INSERT_USER_QUERY = @"INSERT INTO [UserInfo] (UserName, FirstName, LastName, Role, Email, PasswordHash) VALUES (@UserName, @FirstName, @LastName, @Role, @Email, @PasswordHash)";
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@UserName", user.UserName));
+                parameters.Add(new SqlParameter("@FirstName", user.FirstName));
+                parameters.Add(new SqlParameter("@LastName", user.LastName));
+                parameters.Add(new SqlParameter("@Email", user.Email));
+                parameters.Add(new SqlParameter("@PasswordHash", user.PasswordHash));
+                parameters.Add(new SqlParameter("@Role", user.Role));
 
-        public async Task UpdateUserAsync(string documentId, User user)
-        {
-            try
-            {
-                var docRef = _db.Collection(_userCollectionName).Document(documentId);
-                user.UserId = docRef.Id;
-                await docRef.SetAsync(user, SetOptions.Overwrite);
+                await _dBCommand.InsertUpdateDataAsync(INSERT_USER_QUERY, parameters);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error updating user with Document ID {documentId}.");
-                throw;
-            }
-        }
-
-        public async Task DeleteUserAsync(string documentId)
-        {
-            try
-            {
-                var docRef = _db.Collection(_userCollectionName).Document(documentId);
-                await docRef.DeleteAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error deleting user with Document ID {documentId}.");
+                Log.Error("Error inserting new user.", ex);
                 throw;
             }
         }
