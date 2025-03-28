@@ -129,9 +129,13 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 //-------------------------------------------------------------------------
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.File("log.txt",
+    .MinimumLevel.Debug()
+    .WriteTo.File(
+        path: "log.txt",
         rollingInterval: RollingInterval.Month,
-        rollOnFileSizeLimit: false)
+        rollOnFileSizeLimit: false,
+        outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
     .CreateLogger();
 
 // ------------------------------------------------------------------------

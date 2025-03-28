@@ -1,159 +1,20 @@
-2025-03-25 23:31:36.009 +04:00 [INF] Hello, From Serilog
-2025-03-25 23:31:38.159 +04:00 [INF] Hello, From Serilog
-2025-03-27 08:36:11.847 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:36:11.914 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:36:12.429 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:36:12.471 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:37:22.022 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:37:23.333 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:37:23.404 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:37:23.445 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:57:37.585 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 08:57:37.647 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:00:47.267 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:00:47.330 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:00.880 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:00.933 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:12.533 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:12.561 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:22.890 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:22.919 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:24.476 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:03:24.504 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:05:34.570 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:05:34.570 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:05:34.643 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:05:34.643 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:07:52.363 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:07:52.363 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:07:52.431 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 09:07:52.431 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 10:05:49.985 +04:00 [ERR] Error creating blog post.
-2025-03-27 10:05:51.546 +04:00 [ERR] Failed to create a blog
-2025-03-27 10:07:22.075 +04:00 [ERR] Error creating blog post.
-2025-03-27 19:54:05.832 +04:00 [ERR] Error fetching user with email: dummy@gmail.com
-2025-03-27 19:54:33.167 +04:00 [ERR] Server Error! Could not Register User
-2025-03-27 19:56:40.162 +04:00 [ERR] Error fetching user with email: nsseetohul@gmail.com
-2025-03-27 19:56:40.946 +04:00 [ERR] Server Error! Could not Register User
-2025-03-27 20:00:42.598 +04:00 [ERR] Invalid column name 'Password'.
-2025-03-27 20:12:30.700 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 20:12:30.749 +04:00 [ERR] Error fetching user with email: nsseetohul@gmail.com
-2025-03-27 20:12:30.796 +04:00 [ERR] Error authentication User
-2025-03-27 20:14:58.985 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 20:14:59.030 +04:00 [ERR] Error fetching user with email: nsseetohul@gmail.com
-2025-03-27 20:24:59.319 +04:00 [ERR] Invalid attempt to read when no data is present.
-2025-03-27 20:24:59.386 +04:00 [ERR] Error fetching user with email: nsseetohul@gmail.com
-2025-03-27 20:24:59.436 +04:00 [ERR] Error authentication User
-2025-03-27 20:28:57.890 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 20:28:57.915 +04:00 [ERR] Error fetching user with email: nsseetohul@gmail.com
-2025-03-27 20:28:57.959 +04:00 [ERR] Server Error! Could not Register User
-2025-03-27 20:33:53.565 +04:00 [ERR] Error authentication User
-2025-03-27 21:10:20.329 +04:00 [ERR] Must declare the scalar variable "@UserName".
-2025-03-27 21:10:20.373 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:10:20.402 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:10:41.256 +04:00 [ERR] Must declare the scalar variable "@UserName".
-2025-03-27 21:10:41.280 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:10:41.309 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:36:58.403 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:36:58.461 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:36:58.493 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:36:58.513 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:36:58.543 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:36:58.584 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:37:03.426 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:03.452 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:37:03.489 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:37:03.508 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:03.534 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:37:03.565 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:37:04.255 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:04.281 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:04.310 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:04.466 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:04.492 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:04.525 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:07.152 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:07.179 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:07.211 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:07.277 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:07.323 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:07.365 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:09.344 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:09.372 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:09.405 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:09.475 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:09.505 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:09.571 +04:00 [ERR] Error retrieving all blog posts.
-2025-03-27 21:37:18.643 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:18.668 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:37:18.697 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:37:18.715 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:18.743 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:37:18.772 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:37:37.155 +04:00 [ERR] Object of type 'System.Int32' cannot be converted to type 'System.String'.
-2025-03-27 21:37:37.180 +04:00 [ERR] Error fetching blogs post by email raj.
-2025-03-27 21:37:37.206 +04:00 [ERR] Error fetching all self blogs.
-2025-03-27 21:52:15.518 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 21:52:15.563 +04:00 [ERR] Error retrieving blog post with ID undefined.
-2025-03-27 21:52:15.593 +04:00 [ERR] Error retrieving blog post with Id undefined.
-2025-03-27 21:52:17.969 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 21:52:17.996 +04:00 [ERR] Error retrieving blog post with ID undefined.
-2025-03-27 21:52:18.024 +04:00 [ERR] Error retrieving blog post with Id undefined.
-2025-03-27 22:05:19.889 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 22:05:19.937 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 22:05:19.965 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 22:05:24.005 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 22:05:24.029 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 22:05:24.056 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:01:33.740 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:01:33.782 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:01:33.813 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:01:33.926 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:01:33.950 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:01:33.977 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:02:03.984 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:02:04.009 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:02:04.041 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:02:07.044 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:02:07.071 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:02:07.099 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:03:06.804 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:03:06.829 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:03:06.854 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:03:14.050 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:03:14.079 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:03:14.105 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:05:16.124 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:05:58.668 +04:00 [ERR] The multi-part identifier "Blog.BlogId" could not be bound.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:05:58.672 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:05:58.718 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:05:58.739 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:06:03.042 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:06:38.445 +04:00 [ERR] Invalid column name 'BlogId'.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:06:38.490 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:06:38.520 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:06:43.898 +04:00 [ERR] Invalid column name 'BlogId'.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:06:43.959 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:06:43.987 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:08:19.904 +04:00 [ERR] Invalid column name 'BlogId'.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:13:57.337 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:14:02.489 +04:00 [ERR] Error retrieving blog post with Id 1.
-2025-03-27 23:14:02.545 +04:00 [ERR] Invalid column name 'BlogId'.
-The column prefix 'Blog' does not match with a table name or alias name used in the query.
-2025-03-27 23:14:02.570 +04:00 [ERR] Error retrieving blog post with ID 1.
-2025-03-27 23:14:02.598 +04:00 [ERR] Error retrieving blog post with Id 1.
+[2025-03-28 20:00:25 ERR] String or binary data would be truncated in table 'blogManager.dbo.Blog', column 'Excerpt'. Truncated value: 'I used to think X {liberal thing}. I was pretty sure Y {not liberal thing} was wrong. But then I did'.
+The statement has been terminated.
+[2025-03-28 20:00:25 ERR] Error creating blog post.
+[2025-03-28 20:00:25 ERR] Failed to create a blog
+[2025-03-28 20:01:22 ERR] String or binary data would be truncated in table 'blogManager.dbo.Blog', column 'Excerpt'. Truncated value: 'Tech isn’t always about debugging code from a cozy office. Sometimes, it feels more like a spy movie'.
+The statement has been terminated.
+[2025-03-28 20:01:22 ERR] Error creating blog post.
+[2025-03-28 20:01:23 ERR] Failed to create a blog
+[2025-03-28 20:04:28 ERR] String or binary data would be truncated in table 'blogManager.dbo.Blog', column 'Excerpt'. Truncated value: 'As technology architects, we are expected to make decisions. Architectural decisions. Often, these a'.
+The statement has been terminated.
+[2025-03-28 20:04:28 ERR] Error creating blog post.
+[2025-03-28 20:04:28 ERR] Failed to create a blog
+[2025-03-28 20:06:44 ERR] String or binary data would be truncated in table 'blogManager.dbo.Blog', column 'Excerpt'. Truncated value: 'I once worked on a project where we weren’t able to think about technical debt until five years in.'.
+The statement has been terminated.
+[2025-03-28 20:06:44 ERR] Error creating blog post.
+[2025-03-28 20:06:44 ERR] Failed to create a blog
+[2025-03-28 20:09:17 ERR] String or binary data would be truncated in table 'blogManager.dbo.Blog', column 'Excerpt'. Truncated value: 'Attending a meeting is very much like watching a movie, while leading a meeting better resembles dir'.
+The statement has been terminated.
+[2025-03-28 20:09:17 ERR] Error creating blog post.
+[2025-03-28 20:09:17 ERR] Failed to create a blog

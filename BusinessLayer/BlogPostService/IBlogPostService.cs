@@ -12,8 +12,8 @@ namespace BusinessLayer.BlogPostService
         Task<GenericResult<BlogPost>>? GetBlogPostByIdAsync(int id);
         Task<Result> CreateBlogPostAsync(BlogPost blogPost, IFormFile formFile);
         Task<Result> UpdateBlogPostAsync(BlogPost updatedPost);
-        Task<Result> DeleteBlogPostAsync(string blogPostId);
+        Task<Result> DeleteBlogPostAsync(int blogPostId);
         Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog);
-        Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria);
+        Task<GenericResult<List<BlogPost>>> SearchBlogAsync(string searchCriteria);
     }
 }

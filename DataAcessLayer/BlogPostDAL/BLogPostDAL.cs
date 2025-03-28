@@ -21,7 +21,9 @@ namespace DataAcessLayer.BlogPostDAL
 
             try
             {
-                const string GET_ALL_BLOG_QUERY = "SELECT * FROM Blog";
+                const string GET_ALL_BLOG_QUERY = @"SELECT Blog.*, UserInfo.UserName
+                                                    FROM Blog
+                                                    INNER JOIN UserInfo ON UserInfo.UserId = Blog.UserId";
                 result.ResultObject = await _command.GetDataAsync<BlogPost>(GET_ALL_BLOG_QUERY);
                 return result;
             }
@@ -61,9 +63,11 @@ namespace DataAcessLayer.BlogPostDAL
             GenericResult<BlogPost> result = new();
             try
             {
-                const string GET_ALL_BLOG_QUERY_BY_BLOG_ID = @"SELECT TOP 1 *
+                const string GET_ALL_BLOG_QUERY_BY_BLOG_ID = @"SELECT TOP 1 Blog.*, UserInfo.UserName
                                                             FROM Blog
-                                                            WHERE BlogId = @BlogId";
+                                                            INNER JOIN UserInfo ON UserInfo.UserId = Blog.UserId
+                                                            WHERE BlogId = @BlogId;
+                                                            ";
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
                 parameters.Add(new SqlParameter("@BlogId", id));
@@ -110,88 +114,57 @@ namespace DataAcessLayer.BlogPostDAL
             }
         }
 
-        //public async Task<Result> UpdateBlogPostAsync(string documentId, BlogPost updatedPost)
-        //{
-        //    Result result = new();
+        public async Task DeleteBlogPostAsync(int blogId)
+        {
+            try
+            {
+                const string DELETE_BLOG_QUERY_BY_ID = @"Delete 
+                                                        FROM Blog 
+                                                        WHERE BlogId = @BlogId
+                                                        ";
 
-        //    try
-        //    {
-        //        var docRef = _db.Collection(_blogCollectionName).Document(documentId);
-        //        await docRef.SetAsync(updatedPost, SetOptions.Overwrite);
-        //        result.IsSuccess = true;
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@BlogId", blogId));
 
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error($"Error updating blog post with ID {documentId}.", ex.Message, ex);
-        //        throw;
-        //    }
-        //}
+                await _command.InsertUpdateDataAsync(DELETE_BLOG_QUERY_BY_ID, parameters);
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error deleting blog post.", ex.Message, ex);
+                throw;
+            }
+        }
 
-        //public async Task DeleteBlogPostByIdAsync(string id)
-        //{
-        //    try
-        //    {
-        //        var docRef = _db.Collection(_blogCollectionName).Document(id);
-        //        await docRef.DeleteAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error($"Error deleting blog post with ID {id}.", ex.Message, ex);
-        //        throw;
-        //    }
-        //}
+        public async Task<GenericResult<List<BlogPost>>> SearchBlogAsync(string searchCriteria)
+        {
+            GenericResult<List<BlogPost>> result = new GenericResult<List<BlogPost>>();
+            try
+            {
+                string query = @"SELECT Blog.*, UserInfo.UserName
+                                FROM Blog
+                                INNER JOIN UserInfo 
+                                    ON UserInfo.UserId = Blog.UserId
+                                WHERE Title LIKE '%' + @SearchCriteria + '%'
+                                   OR Content LIKE '%' + @SearchCriteria + '%'
+                                   OR UserName LIKE '%' + @SearchCriteria + '%';
+                                ";
 
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@SearchCriteria",searchCriteria)
+                };
 
-        //public async Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria)
-        //{
-        //    GenericResult<IEnumerable<BlogPost>> blogList = new();
-        //    try
-        //    {
-        //        var collectionRef = _db.Collection(_blogCollectionName);
-        //        var snapshot = await collectionRef.GetSnapshotAsync();
-
-        //        var allPosts = snapshot.Documents
-        //            .Select(doc => doc.ConvertTo<BlogPost>())
-        //            .ToList();
-
-        //        if (string.IsNullOrWhiteSpace(searchCriteria))
-        //        {
-        //            blogList.ResultObject = allPosts;
-        //            blogList.IsSuccess = true;
-
-        //            return blogList;
-        //        }
-
-        //        string lowerSearch = searchCriteria.ToLower();
-
-        //        var filtered = allPosts.Where(post =>
-        //            (post.Title ?? "").ToLower().Contains(lowerSearch) ||
-        //            (post.Content ?? "").ToLower().Contains(lowerSearch) ||
-        //            (post.CreatedBy ?? "").ToLower().Contains(lowerSearch)
-        //        ).ToList();
-
-        //        blogList.ResultObject = filtered;
-        //        blogList.IsSuccess = true;
-
-        //        return blogList;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error($"Error searching blog post by criteria {searchCriteria}.", ex.Message, ex);
-        //        throw;
-        //    }
-        //}
-
-        //public Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<GenericResult<IEnumerable<BlogPost>>> GetAllBlogPostsByTagsAsync(List<string> tags)
-        //{
-        //    throw new NotImplementedException();
-        //}
+                List<BlogPost> blogPosts = await _command.GetDataWithConditionsAsync<BlogPost>(query, parameters);
+                result.IsSuccess = true;
+                result.ResultObject = blogPosts;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage.Add("Errror fetching from the data base");
+                Log.Error("Errror fetching from the data base", ex.Message);
+            }
+            return result;
+        }
     }
 }

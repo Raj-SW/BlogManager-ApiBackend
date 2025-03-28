@@ -112,57 +112,6 @@ namespace BusinessLayer.BlogPostService
         //    }
         //}
 
-        //public async Task<Result> DeleteBlogPostAsync(string id)
-        //{
-        //    try
-        //    {
-        //        GenericResult<BlogPost> existingPost = await GetBlogPostByIdAsync(id);
-        //        ClaimsPrincipal? userClaims = _httpContextAccessor.HttpContext?.User;
-        //        string? userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
-
-        //        if (string.IsNullOrEmpty(userName))
-        //            return new Result() { IsSuccess = false, ErrorMessage = ["User not logged in"] };
-
-        //        if (existingPost.ResultObject == null)
-        //            return new Result() { IsSuccess = false, ErrorMessage = ["Blog not Found"] };
-
-        //        if (!string.Equals(existingPost.ResultObject!.CreatedBy, userName))
-        //            new Result() { IsSuccess = false, ErrorMessage = ["User cannot edit other user's post"] };
-
-        //        await _blogPostDAL.DeleteBlogPostByIdAsync(id);
-
-        //        return new Result() { IsSuccess = true };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error($"Error deleting blog post with ID {id}.", ex.Message, ex);
-        //        return new Result() { IsSuccess = false, ErrorMessage = [ex.Message] };
-        //    }
-        //}
-
-        //public async Task<Result> UpdateBlogPostAsync(BlogPost updatedPost)
-        //{
-
-        //    GenericResult<BlogPost> existingPost = await GetBlogPostByIdAsync(updatedPost.BlogPostDocumentId);
-
-        //    ClaimsPrincipal? userClaims = _httpContextAccessor.HttpContext?.User;
-        //    string? userName = userClaims?.FindFirst(ClaimTypes.Name)?.Value;
-
-        //    if (string.IsNullOrEmpty(userName))
-        //        return new Result() { IsSuccess = false, ErrorMessage = ["User not logged in"] };
-
-        //    if (existingPost == null)
-        //        return new Result() { IsSuccess = false, ErrorMessage = ["Post not Found or User is not authorised to edit"] };
-
-        //    if (!string.Equals(updatedPost.CreatedBy, userName))
-        //        new Result() { IsSuccess = false, ErrorMessage = ["User cannot edit other user's post"] };
-
-
-        //    Result result = await _blogPostDAL.UpdateBlogPostAsync(existingPost.ResultObject.BlogPostDocumentId, updatedPost);
-
-        //    return result;
-        //}
-
         public async Task<string> UploadBlogThumbnailImage(IFormFile formFile)
         {
             try
@@ -178,11 +127,6 @@ namespace BusinessLayer.BlogPostService
                 throw new NotImplementedException("Error in uploading image");
             }
         }
-
-        //public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria)
-        //{
-        //    return _blogPostDAL.SearchBlogAsync(searchCriteria);
-        //}
 
         public Task SuggestEditBlogPostAsync(BlogPost suggestEditBlog)
         {
@@ -221,14 +165,31 @@ namespace BusinessLayer.BlogPostService
             throw new NotImplementedException();
         }
 
-        public Task<Result> DeleteBlogPostAsync(string blogPostId)
+        public async Task<Result> DeleteBlogPostAsync(int blogPostId)
         {
-            throw new NotImplementedException();
+            Result result = new();
+
+            try
+            {
+                await _blogPostDAL.DeleteBlogPostAsync(blogPostId);
+                result!.IsSuccess = true;
+
+                return result!;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage.Add("Unexpected server error occured when deleting post");
+                Log.Error("Unexpected server error occured when deleting post", ex.Message, ex);
+
+                return result;
+            }
         }
 
-        public Task<GenericResult<IEnumerable<BlogPost>>> SearchBlogAsync(string searchCriteria)
+        public async Task<GenericResult<List<BlogPost>>> SearchBlogAsync(string searchCriteria)
         {
-            throw new NotImplementedException();
+
+            return await _blogPostDAL.SearchBlogAsync(searchCriteria);
         }
     }
 }

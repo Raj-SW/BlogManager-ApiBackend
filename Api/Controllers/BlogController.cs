@@ -111,8 +111,14 @@ namespace Api.Controllers
 
         [HttpPost("DeletePostAsync/{id}")]
         [Authorize(Policy = "LoggedUser")]
-        public async Task<IActionResult> DeleteBlogPostAsync(string id)
+        public async Task<IActionResult> DeleteBlogPostAsync(int id)
         {
+            string authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+            string token = authHeader.Substring("Bearer ".Length).Trim();
+
+            if (string.IsNullOrEmpty(token))
+                return Unauthorized("You do not have access for this operation");
+
             Result result = await _blogService.DeleteBlogPostAsync(id);
             return Ok(result);
         }
@@ -120,7 +126,7 @@ namespace Api.Controllers
         [HttpGet("SearchBlogAsync")]
         public async Task<IActionResult> SearchBlogAsync(string searchCriteria)
         {
-            GenericResult<IEnumerable<BlogPost>> result = await _blogService.SearchBlogAsync(searchCriteria);
+            GenericResult<List<BlogPost>> result = await _blogService.SearchBlogAsync(searchCriteria);
             return Ok(result);
         }
     }
