@@ -21,5 +21,7 @@ namespace Model.BlogPost
         public string? ThumbnailLink { get; set; }
 
         public IFormFile File { get; set; }
+
+        public string? UserName { get; set; }
     }
 }

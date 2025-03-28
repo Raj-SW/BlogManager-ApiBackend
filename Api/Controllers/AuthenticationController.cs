@@ -38,7 +38,7 @@ namespace Api.Controllers
         public async Task<IActionResult> LogoutAsync()
         {
             await HttpContext.SignOutAsync();
-            return Ok(new { message = "Logged out successfully" });
+            return Ok();
         }
     }
 }
